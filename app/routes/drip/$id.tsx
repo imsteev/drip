@@ -12,6 +12,7 @@ export const loader = async ({ params }: LoaderArgs) => {
   });
 };
 
+// TODO: auto-delete messages?
 export const action = async ({ request, params }: ActionArgs) => {
   const form = await request.formData();
   const content = form.get("content");
@@ -21,11 +22,14 @@ export const action = async ({ request, params }: ActionArgs) => {
     throw new Error(`Form not submitted correctly.`);
   }
 
-  console.log({ params });
-  const fields = { content, room: params.id ?? "hi" };
+  if (typeof params.id !== "string" || !params.id) {
+    throw new Error("Invalid room type. Needs to be non-empty string");
+  }
+
+  const fields = { content, room: params.id };
 
   const message = await db.message.create({ data: fields });
-  console.log({ message });
+
   return redirect(`/drip/${message.room}`);
 };
 

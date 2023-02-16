@@ -1,6 +1,8 @@
 import { ActionArgs, redirect } from "@remix-run/node";
 import { db } from "~/backend/db.server";
 
+import randomWords from "random-words";
+
 export const action = async ({ request }: ActionArgs) => {
   const form = await request.formData();
   const content = form.get("content");
@@ -10,7 +12,9 @@ export const action = async ({ request }: ActionArgs) => {
     throw new Error(`Form not submitted correctly.`);
   }
 
-  const fields = { content, room: "hi" };
+  // TODO: generate random room names
+
+  const fields = { content, room: randomWords(5).join("-") };
 
   const message = await db.message.create({ data: fields });
   console.log({ message });
