@@ -3,7 +3,7 @@ import { db } from "~/backend/db.server";
 
 import randomWords from "random-words";
 import { Form } from "@remix-run/react";
-import { Button, Label, Pane, TextInput } from "evergreen-ui";
+import { Button, Heading, Label, Pane, TextInput } from "evergreen-ui";
 
 export const action = async ({ request }: ActionArgs) => {
   const form = await request.formData();
@@ -25,7 +25,7 @@ export const action = async ({ request }: ActionArgs) => {
 export default function IndexRoute() {
   return (
     <Pane width="100%">
-      <h1>Drip</h1>
+      <Heading size="900">Drip</Heading>
       <Pane display="flex" justifyContent="center">
         <Form method="post">
           <Label marginRight="12px" htmlFor="content">
