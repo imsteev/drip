@@ -19,7 +19,7 @@ export const action = async ({ request }: ActionArgs) => {
     data: { content, room: randomWords(2).join("-") },
   });
 
-  return redirect(`/drip/${message.room}`);
+  return redirect(`/${message.room}`);
 };
 
 export default function IndexRoute() {
