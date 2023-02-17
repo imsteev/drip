@@ -13,6 +13,7 @@
     "@remix-run/node": "^1.13.0",
     "@remix-run/react": "^1.13.0",
     "@remix-run/serve": "^1.13.0",
+    "evergreen-ui": "^7.1.4",
     "isbot": "^3.6.5",
     "random-words": "^1.2.1",
     "react": "^18.2.0",
