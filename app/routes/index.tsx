@@ -19,18 +19,20 @@ export const action = async ({ request }: ActionArgs) => {
     data: { content, room: randomWords(2).join("-") },
   });
 
-  return redirect(`/${message.room}`);
+  return redirect(`/rooms/${message.room}`);
 };
 
 export default function IndexRoute() {
   return (
-    <Pane width="100%">
+    <Pane
+      width="100%"
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+    >
       <Heading size={900}>Drip</Heading>
-      <Pane display="flex" justifyContent="center">
+      <Pane display="flex" flexDirection="column" marginTop="32px">
         <Form method="post">
-          <Label marginRight="12px" htmlFor="content">
-            Message
-          </Label>
           <TextInput type="text" name="content" />
           <Button marginLeft="12px" type="submit">
             Send message to start a new room
