@@ -25,7 +25,7 @@ export const action = async ({ request }: ActionArgs) => {
 export default function IndexRoute() {
   return (
     <Pane width="100%">
-      <Heading size="900">Drip</Heading>
+      <Heading size={900}>Drip</Heading>
       <Pane display="flex" justifyContent="center">
         <Form method="post">
           <Label marginRight="12px" htmlFor="content">
