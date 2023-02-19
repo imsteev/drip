@@ -3,7 +3,14 @@ import { db } from "~/backend/db.server";
 
 import randomWords from "random-words";
 import { Form } from "@remix-run/react";
-import { Button, Heading, Label, Pane, TextInput } from "evergreen-ui";
+import {
+  Button,
+  Heading,
+  Label,
+  majorScale,
+  Pane,
+  TextInput,
+} from "evergreen-ui";
 
 export const action = async ({ request }: ActionArgs) => {
   const form = await request.formData();
@@ -31,10 +38,10 @@ export default function IndexRoute() {
       alignItems="center"
     >
       <Heading size={900}>Drip</Heading>
-      <Pane display="flex" flexDirection="column" marginTop="32px">
+      <Pane display="flex" flexDirection="column" style={{ marginTop: "32px" }}>
         <Form method="post">
           <TextInput type="text" name="content" />
-          <Button marginLeft="12px" type="submit">
+          <Button style={{ marginLeft: "12px" }} type="submit">
             Send message to start a new room
           </Button>
         </Form>

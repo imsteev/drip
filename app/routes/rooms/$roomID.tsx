@@ -72,28 +72,30 @@ export default function RoomRoute() {
       alignItems="center"
       width="100%"
     >
-      <Pane display="flex" alignItems="flex-end" gap="24px">
+      <Pane display="flex" alignItems="flex-end" style={{ gap: "24px" }}>
         <Heading size={900}>Room: {data.params.roomID}</Heading>
         <PurgeRoom />
       </Pane>
-      <Pane display="flex" justifyContent="center" padding="64px">
+      <Pane display="flex" justifyContent="center" style={{ padding: "64px" }}>
         <Form method="post">
           <input type="hidden" name="action" value="new-message" />
           <TextInput type="text" name="content" />
-          <Button marginLeft="12px" type="submit">
+          <Button style={{ marginLeft: "12px" }} type="submit">
             New message
           </Button>
         </Form>
       </Pane>
-      <Pane width="50%">
+      <Pane style={{ width: "50%" }}>
         {data.messages.map((m) => (
           <Pane
             key={m.id}
-            width="100%"
-            borderRadius="25px"
-            border="solid 1px #222222"
-            padding="24px"
-            marginY="24px"
+            style={{
+              padding: "24px",
+              margin: "24px 0",
+              borderRadius: "25px",
+              border: "solid 1px #222222",
+              width: "100%",
+            }}
           >
             <Form method="delete">
               <input type="hidden" name="action" value="delete-message" />

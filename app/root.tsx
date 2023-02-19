@@ -1,5 +1,6 @@
 import { Link, LiveReload, Outlet, Scripts } from "@remix-run/react";
 import { extractStyles } from "evergreen-ui";
+import React from "react";
 
 export default function App() {
   const { css, hydrationScript } = extractStyles();
@@ -8,12 +9,10 @@ export default function App() {
       <head>
         <meta charSet="utf-8" />
         <title>Drip</title>
-
-        {/* https://github.com/segmentio/evergreen/issues/154#issuecomment-375766412 */}
         <style id="evergreen-css" dangerouslySetInnerHTML={{ __html: css }} />
-        {hydrationScript}
       </head>
       <body>
+        {hydrationScript}
         <Link to="/">Home</Link>
         <LiveReload />
         <Outlet />
