@@ -15,10 +15,13 @@ import { db } from "~/backend/db.server";
 import PurgeRoom from "~/routes/rooms/PurgeRoom";
 
 export const loader = async ({ params }: LoaderArgs) => {
+  const now = new Date();
+  const tenMinutesAgo = new Date(now.setUTCMinutes(now.getUTCMinutes() - 10));
   return json({
     messages: await db.message.findMany({
       where: {
         room: params.roomID,
+        createdAt: { gt: tenMinutesAgo },
       },
     }),
     params,
@@ -72,30 +75,32 @@ export default function RoomRoute() {
       alignItems="center"
       width="100%"
     >
-      <Pane display="flex" alignItems="flex-end" style={{ gap: "24px" }}>
+      <Pane display="flex" alignItems="flex-end" gap="24px">
         <Heading size={900}>Room: {data.params.roomID}</Heading>
         <PurgeRoom />
       </Pane>
-      <Pane display="flex" justifyContent="center" style={{ padding: "64px" }}>
+      <Pane display="flex" justifyContent="center" padding="64px">
         <Form method="post">
           <input type="hidden" name="action" value="new-message" />
           <TextInput type="text" name="content" />
-          <Button style={{ marginLeft: "12px" }} type="submit">
+          <Button marginLeft="12px" type="submit">
             New message
           </Button>
         </Form>
       </Pane>
-      <Pane style={{ width: "50%" }}>
+      <Pane width="50%">
+        <Pane width="100%" textAlign="center">
+          <Text>Showing messages in the past 10 minutes</Text>
+        </Pane>
+
         {data.messages.map((m) => (
           <Pane
             key={m.id}
-            style={{
-              padding: "24px",
-              margin: "24px 0",
-              borderRadius: "25px",
-              border: "solid 1px #222222",
-              width: "100%",
-            }}
+            padding="24px"
+            marginY="24px"
+            borderRadius="25px"
+            border="solid 1px #222222"
+            width="100%"
           >
             <Form method="delete">
               <input type="hidden" name="action" value="delete-message" />
@@ -106,6 +111,13 @@ export default function RoomRoute() {
                 justifyContent="space-between"
               >
                 <Text>{m.content}</Text>
+                <Text>
+                  {new Intl.DateTimeFormat("en-US", {
+                    hour: "numeric",
+                    minute: "numeric",
+                    second: "numeric",
+                  }).format(new Date(m.createdAt))}
+                </Text>
                 <Button type="submit" className="button">
                   delete
                 </Button>

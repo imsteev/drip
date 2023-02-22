@@ -38,10 +38,10 @@ export default function IndexRoute() {
       alignItems="center"
     >
       <Heading size={900}>Drip</Heading>
-      <Pane display="flex" flexDirection="column" style={{ marginTop: "32px" }}>
+      <Pane display="flex" flexDirection="column" marginTop="32px">
         <Form method="post">
           <TextInput type="text" name="content" />
-          <Button style={{ marginLeft: "12px" }} type="submit">
+          <Button marginLeft="12px" type="submit">
             Send message to start a new room
           </Button>
         </Form>
