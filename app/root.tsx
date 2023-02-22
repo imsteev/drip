@@ -7,7 +7,7 @@ export default function App() {
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
-        <title>Drip</title>
+        <title>Drip!!</title>
         <style id="evergreen-css" dangerouslySetInnerHTML={{ __html: css }} />
       </head>
       <body>
