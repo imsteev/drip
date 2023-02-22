@@ -1,16 +1,6 @@
 import { ActionArgs, json, LoaderArgs, redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
-import {
-  Button,
-  ClipboardIcon,
-  Heading,
-  IconButton,
-  Label,
-  Pane,
-  Paragraph,
-  Text,
-  TextInput,
-} from "evergreen-ui";
+import { Button, Heading, Pane, Text, TextInput } from "evergreen-ui";
 import { db } from "~/backend/db.server";
 import PurgeRoom from "~/routes/rooms/PurgeRoom";
 

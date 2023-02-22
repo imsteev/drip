@@ -1,6 +1,5 @@
-import { Link, LiveReload, Outlet, Scripts } from "@remix-run/react";
+import { Link, LiveReload, Outlet } from "@remix-run/react";
 import { extractStyles } from "evergreen-ui";
-import React from "react";
 
 export default function App() {
   const { css, hydrationScript } = extractStyles();
