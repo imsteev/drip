@@ -1,6 +1,5 @@
 import { ActionArgs, json, LoaderArgs, redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
-import { Button, Heading, Pane, Text, TextInput } from "evergreen-ui";
 import { db } from "~/backend/db.server";
 import PurgeRoom from "~/routes/rooms/PurgeRoom";
 
@@ -59,63 +58,69 @@ export const action = async ({ request, params }: ActionArgs) => {
 export default function RoomRoute() {
   const data = useLoaderData<typeof loader>();
   return (
-    <Pane
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      width="100%"
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        width: "100%",
+      }}
     >
-      <Pane display="flex" alignItems="flex-end" gap="24px">
-        <Heading size={900}>Room: {data.params.roomID}</Heading>
+      <div style={{ display: "flex", alignItems: "flex-end", gap: "24px" }}>
+        <h1>Room: {data.params.roomID}</h1>
         <PurgeRoom />
-      </Pane>
-      <Pane display="flex" justifyContent="center" padding="64px">
+      </div>
+      <div
+        style={{ display: "flex", justifyContent: "center", padding: "64px" }}
+      >
         <Form method="post">
           <input type="hidden" name="action" value="new-message" />
-          <TextInput type="text" name="content" />
-          <Button marginLeft="12px" type="submit">
+          <input type="text" name="content" />
+          <button style={{ marginLeft: "12px" }} type="submit">
             New message
-          </Button>
+          </button>
         </Form>
-      </Pane>
-      <Pane width="50%">
-        <Pane width="100%" textAlign="center">
-          <Text>Showing messages in the past 10 minutes</Text>
-        </Pane>
+      </div>
+      <div style={{ width: "50%" }}>
+        <div style={{ width: "100%", textAlign: "center" }}>
+          Showing messages in the past 10 minutes
+        </div>
 
         {data.messages.map((m) => (
-          <Pane
+          <div
             key={m.id}
-            padding="24px"
-            marginY="24px"
-            borderRadius="25px"
-            border="solid 1px #222222"
-            width="100%"
+            style={{
+              padding: "24px",
+              margin: "24px 0",
+              borderRadius: "25px",
+              border: "solid 1px #222222",
+              width: "100%",
+            }}
           >
             <Form method="delete">
               <input type="hidden" name="action" value="delete-message" />
               <input type="hidden" name="messageID" value={m.id} />
-              <Pane
-                display="flex"
-                alignItems="center"
-                justifyContent="space-between"
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
               >
-                <Text>{m.content}</Text>
-                <Text>
+                <span>{m.content}</span>
+                <span>
                   {new Intl.DateTimeFormat("en-US", {
                     hour: "numeric",
                     minute: "numeric",
                     second: "numeric",
                   }).format(new Date(m.createdAt))}
-                </Text>
-                <Button type="submit" className="button">
-                  delete
-                </Button>
-              </Pane>
+                </span>
+                <button type="submit">delete</button>
+              </div>
             </Form>
-          </Pane>
+          </div>
         ))}
-      </Pane>
-    </Pane>
+      </div>
+    </div>
   );
 }

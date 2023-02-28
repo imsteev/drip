@@ -3,15 +3,6 @@ import { db } from "~/backend/db.server";
 
 import randomWords from "random-words";
 import { Form } from "@remix-run/react";
-import {
-  Button,
-  Heading,
-  Label,
-  majorScale,
-  Pane,
-  Text,
-  TextInput,
-} from "evergreen-ui";
 
 export const action = async ({ request }: ActionArgs) => {
   const form = await request.formData();
@@ -32,27 +23,29 @@ export const action = async ({ request }: ActionArgs) => {
 
 export default function IndexRoute() {
   return (
-    <Pane
-      width="100%"
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
+    <div
+      style={{
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
     >
-      <Heading size={900}>Drip</Heading>
-      <Pane marginTop="24px" width="40%">
-        <Text>
-          Share messages between your devices. Send a message and we'll create a
-          room for you. Messages will only last for 10 minutes.
-        </Text>
-      </Pane>
-      <Pane display="flex" flexDirection="column" marginTop="32px">
+      <h1>Drip</h1>
+      <div style={{ marginTop: "24px", width: "40%" }}>
+        Share messages between your devices. Send a message and we'll create a
+        room for you. Messages will only last for 10 minutes.
+      </div>
+      <div
+        style={{ display: "flex", flexDirection: "column", marginTop: "32px" }}
+      >
         <Form method="post">
-          <TextInput type="text" name="content" />
-          <Button marginLeft="12px" type="submit">
+          <input type="text" name="content" />
+          <button style={{ marginLeft: "12px" }} type="submit">
             Send message to start a new room
-          </Button>
+          </button>
         </Form>
-      </Pane>
-    </Pane>
+      </div>
+    </div>
   );
 }
