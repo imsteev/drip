@@ -2,52 +2,65 @@
 
 {{ define "scripts"}}
 <script
-src="https://unpkg.com/htmx.org@1.9.4"
-integrity="sha384-zUfuhFKKZCbHTY6aRR46gxiqszMk5tcHjsVFxnUo8VMus4kHGVdIYVbOYYNlKmHV"
-crossorigin="anonymous"
+  src="https://unpkg.com/htmx.org@1.9.4"
+  integrity="sha384-zUfuhFKKZCbHTY6aRR46gxiqszMk5tcHjsVFxnUo8VMus4kHGVdIYVbOYYNlKmHV"
+  crossorigin="anonymous"
 ></script>
 <style>
-body {
-  display: block;
-}
+  body {
+    display: block;
+  }
 
-main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  height: 100%;
-  gap: 8px;
-}
+  main > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100%;
+    gap: 8px;
 
-#text-input {
-  padding: 16px;
-  width: 512px;
-}
+    width: 50%;
+    padding: 16px;
+    padding-bottom: 64px;
 
-#upload-file {
-  padding: 16px;
-  width: 512px;
-  border: solid 1px grey;
-}
+    border: solid 1px red;
+    border-radius: 18px;
+  }
 
+  #text-input {
+    padding: 16px;
+    width: 512px;
+  }
+
+  #upload-file {
+    padding: 16px;
+    width: 512px;
+    border: solid 1px grey;
+  }
 </style>
 {{ end }}
 
 {{ define "body" }}
-    <main>
-      <h1>Drip</h1>
-      <div>
-        <input id="text-input" name="text" type="text" placeholder="Start typing.." hx-post="/drip/text" hx-target="body" />
-        <div style="margin: 8px 8px 0 0; text-align: right">
-          press enter to drip
-        </div>
+<main>
+  <div>
+    <h1>Drip</h1>
+    <div>
+      <input
+        id="text-input"
+        name="text"
+        type="text"
+        placeholder="Start typing.."
+        hx-post="/drip/text"
+        hx-target="body"
+      />
+      <div style="margin: 8px 8px 0 0; text-align: right">
+        press enter to drip
       </div>
-      <p>or</p>
-      <div style="display: flex; align-items: center">
-        <input id="upload-file" type="file" />
-      </div>
-      </main>
     </div>
-  </main>
+    <p>or</p>
+    <div style="display: flex; align-items: center">
+      <input id="upload-file" type="file" />
+    </div>
+  </div>
+</main>
 {{ end }}
