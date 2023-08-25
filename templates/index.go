@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	indexHtmlTmpl *template.Template
+	tmpl *template.Template
 )
 
 type IndexTemplate struct {
@@ -14,24 +14,11 @@ type IndexTemplate struct {
 }
 
 func (it IndexTemplate) Render(w io.Writer) error {
-	if indexHtmlTmpl == nil {
-		tmpl, err := template.ParseFiles("./templates/index.html")
-		if err != nil {
+	if tmpl == nil {
+		var err error
+		if tmpl, err = template.ParseGlob("./templates/*.tmpl"); err != nil {
 			return err
 		}
-		indexHtmlTmpl = tmpl
 	}
-	return indexHtmlTmpl.Execute(w, it.Messages)
-}
-
-type MeTemplate struct {
-	Messages []string
-}
-
-func (mt MeTemplate) Render(w io.Writer) error {
-	tmpl, err := template.ParseFiles("./templates/me.html")
-	if err != nil {
-		return err
-	}
-	return tmpl.Execute(w, mt.Messages)
+	return tmpl.ExecuteTemplate(w, "base.tmpl", it.Messages)
 }
