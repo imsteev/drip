@@ -1,45 +1,3 @@
-{{ define "title" }}Drip{{ end }}
-
-{{ define "scripts"}}
-<script
-  src="https://unpkg.com/htmx.org@1.9.4"
-  integrity="sha384-zUfuhFKKZCbHTY6aRR46gxiqszMk5tcHjsVFxnUo8VMus4kHGVdIYVbOYYNlKmHV"
-  crossorigin="anonymous"
-></script>
-<style>
-  body {
-    display: block;
-  }
-
-  main > div {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    height: 100%;
-    gap: 8px;
-
-    width: 50%;
-    padding: 16px;
-    padding-bottom: 64px;
-
-    border: solid 1px red;
-    border-radius: 18px;
-  }
-
-  #text-input {
-    padding: 16px;
-    width: 512px;
-  }
-
-  #upload-file {
-    padding: 16px;
-    width: 512px;
-    border: solid 1px grey;
-  }
-</style>
-{{ end }}
-
 {{ define "body" }}
 <main>
   <div>
@@ -50,7 +8,7 @@
         name="text"
         type="text"
         placeholder="Start typing.."
-        hx-post="/drip/text"
+        hx-post="/drip"
         hx-target="body"
       />
       <div style="margin: 8px 8px 0 0; text-align: right">
@@ -62,5 +20,19 @@
       <input id="upload-file" type="file" />
     </div>
   </div>
+  {{if . }}
+  <div>
+    <h2>Your drip</h2>
+    <ul>
+      {{ range . }}
+      <li>
+        {{ println .}}
+      </li>
+      {{
+        end
+      }}
+    </ul>
+  </div>
+  {{ end }}
 </main>
 {{ end }}

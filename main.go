@@ -26,11 +26,15 @@ func main() {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(60 * time.Second))
 
-	// r.Post("/drip/{id}", func(w http.ResponseWriter, r *http.Request) {
-	// 	s.AddMessage(r.FormValue("text"), s.GetActiveSpace())
-	// 	w.Header().Add("HX-Push", fmt.Sprintf("/drip/%d", s.GetActiveSpace()))
-	// 	renderMainPage(w)
-	// })
+	r.Post("/drip", func(w http.ResponseWriter, r *http.Request) {
+		s.AddMessage(r.FormValue("text"), data.MY_SPACE)
+		tmpl := templates.Index{
+			Messages: s.GetMessages(data.MY_SPACE),
+		}
+		if err := tmpl.Render(w); err != nil {
+			utils.WriteStrf(w, "error generating template: %v", err)
+		}
+	})
 
 	// r.Get("/drip/{id}", func(w http.ResponseWriter, r *http.Request) {
 	// 	dripID := chi.URLParam(r, "id")
@@ -48,7 +52,9 @@ func main() {
 	// })
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		tmpl := templates.IndexTemplate{}
+		tmpl := templates.Index{
+			Messages: s.GetMessages(data.MY_SPACE),
+		}
 		if err := tmpl.Render(w); err != nil {
 			utils.WriteStrf(w, "error generating template: %v", err)
 		}
