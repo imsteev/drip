@@ -9,6 +9,9 @@ var (
 )
 
 func (s Store) AddMessage(msg string, spaceID int) {
+	if msg == "" {
+		return
+	}
 	spaces[spaceID] = append(spaces[spaceID], msg)
 }
 
