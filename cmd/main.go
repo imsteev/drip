@@ -10,6 +10,10 @@ import (
 	"github.com/go-chi/chi/middleware"
 )
 
+var (
+	PORT = "8080"
+)
+
 func main() {
 
 	r := chi.NewRouter()
@@ -27,8 +31,9 @@ func main() {
 	r.Get("/space/{spaceID}", ctrl.GetSpace)
 	r.Get("/", ctrl.GetMainPage)
 
-	log.Printf("listening on %s\n", ":3000")
-	if err := http.ListenAndServe(":3000", r); err != nil {
+	addr := ":" + PORT
+	log.Printf("listening on %s\n", addr)
+	if err := http.ListenAndServe(addr, r); err != nil {
 		log.Fatalf("server crashed: %s", err)
 	}
 }
