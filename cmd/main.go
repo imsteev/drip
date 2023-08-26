@@ -4,6 +4,7 @@ import (
 	"drip/data"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/go-chi/chi"
@@ -11,8 +12,18 @@ import (
 )
 
 var (
-	PORT = "8080"
+	PORT     = os.Getenv("PORT")
+	BASE_URL = os.Getenv("BASE_URL")
 )
+
+func init() {
+	if PORT == "" {
+		PORT = "8080"
+	}
+	if BASE_URL == "" {
+		BASE_URL = "http://localhost:8080"
+	}
+}
 
 func main() {
 

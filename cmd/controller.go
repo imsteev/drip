@@ -10,8 +10,6 @@ import (
 	"github.com/go-chi/chi"
 )
 
-var roomURL string = "http://localhost:3000/space/white-rabbit"
-
 type Controller struct {
 	Store *data.Store
 }
@@ -19,9 +17,8 @@ type Controller struct {
 func (c *Controller) GetMainPage(w http.ResponseWriter, r *http.Request) {
 	tmpl := templates.Index{
 		Messages: c.Store.GetMessages(data.MY_SPACE),
-		RoomURL:  roomURL,
+		RoomURL:  BASE_URL + "/space/" + string(data.MY_SPACE),
 	}
-	fmt.Println(roomURL)
 	if err := tmpl.Render(w); err != nil {
 		utils.WriteStrf(w, "error generating template: %v", err)
 	}
@@ -33,7 +30,7 @@ func (c *Controller) GetSpace(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(spaceID, 1)
 	tmpl := templates.Index{
 		Messages: c.Store.GetMessages(data.SpaceID(spaceID)),
-		RoomURL:  roomURL,
+		RoomURL:  BASE_URL + "/space/" + string(data.MY_SPACE),
 	}
 	if err := tmpl.Render(w); err != nil {
 		utils.WriteStrf(w, "error generating template: %v", err)
@@ -49,7 +46,7 @@ func (c *Controller) CreateDrip(w http.ResponseWriter, r *http.Request) {
 
 	tmpl := templates.Index{
 		Messages: c.Store.GetMessages(data.MY_SPACE),
-		RoomURL:  roomURL,
+		RoomURL:  BASE_URL + "/space/" + string(data.MY_SPACE),
 	}
 	if err := tmpl.Render(w); err != nil {
 		utils.WriteStrf(w, "error generating template: %v", err)

@@ -12,6 +12,7 @@ primary_region = "ewr"
 
 [env]
   PORT = "8080"
+  BASE_URL = "https://drip.fly.dev"
 
 [http_service]
   internal_port = 8080
