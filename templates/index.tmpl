@@ -23,9 +23,12 @@
     <h2>Your drip</h2>
     <ul>
       {{ range . }}
-      <li>
-        {{ println .}}
-      </li>
+      <form hx-delete="/drip?text={{.}}">
+        <li>
+          {{ println .}}
+          <button>clear</button>
+        </li>
+      </form>
       {{
         end
       }}

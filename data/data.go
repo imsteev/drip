@@ -22,3 +22,15 @@ func (s Store) GetMessages(spaceID int) []string {
 	}
 	return msgs
 }
+
+func (s Store) DeleteMessage(msg string, spaceID int) {
+	if spaces[spaceID] != nil {
+		newMsgs := []string{}
+		for _, m := range spaces[spaceID] {
+			if m != msg {
+				newMsgs = append(newMsgs, m)
+			}
+		}
+		spaces[spaceID] = newMsgs
+	}
+}

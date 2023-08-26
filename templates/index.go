@@ -2,7 +2,6 @@ package templates
 
 import (
 	"embed"
-	"fmt"
 	"html/template"
 	"io"
 )
@@ -24,6 +23,5 @@ func (it Index) Render(w io.Writer) error {
 			return err
 		}
 	}
-	fmt.Println(it.Messages)
 	return tmpl.ExecuteTemplate(w, "base.tmpl", it.Messages)
 }
