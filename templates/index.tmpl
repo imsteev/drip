@@ -26,22 +26,14 @@
   </div>
   <div id="drip-container">
     <h2>Recent</h2>
-    <div style="display: flex; flex-wrap: wrap">
+    <div style="display: flex; flex-wrap: wrap; gap: 16px">
       {{ range.Messages }}
       <form
         hx-delete="/drip?text={{.}}"
         hx-swap="outerHTML"
-        style="margin: 16px; border-radius: 16px"
+        style="border-radius: 16px"
       >
-        <div
-          style="
-            border: 1px solid chocolate;
-            padding: 16px;
-            border-radius: 16px;
-            background-color: peachpuff;
-            filter: drop-shadow(0px 4px 8px chocolate);
-          "
-        >
+        <div class="drip">
           {{ println .}}
           <button>x</button>
         </div>
