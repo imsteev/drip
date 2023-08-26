@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"drip/data"
@@ -12,9 +12,13 @@ import (
 
 var roomURL string = "http://localhost:3000/space/white-rabbit"
 
-func GetMainPage(w http.ResponseWriter, r *http.Request) {
+type Controller struct {
+	Store *data.Store
+}
+
+func (c *Controller) GetMainPage(w http.ResponseWriter, r *http.Request) {
 	tmpl := templates.Index{
-		Messages: s.GetMessages(data.MY_SPACE),
+		Messages: c.Store.GetMessages(data.MY_SPACE),
 		RoomURL:  roomURL,
 	}
 	fmt.Println(roomURL)
@@ -23,12 +27,12 @@ func GetMainPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GetSpace(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) GetSpace(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	spaceID := chi.URLParam(r, "spaceID")
 	fmt.Println(spaceID, 1)
 	tmpl := templates.Index{
-		Messages: s.GetMessages(data.SpaceID(spaceID)),
+		Messages: c.Store.GetMessages(data.SpaceID(spaceID)),
 		RoomURL:  roomURL,
 	}
 	if err := tmpl.Render(w); err != nil {
@@ -36,15 +40,15 @@ func GetSpace(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func CreateDrip(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) CreateDrip(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		utils.WriteStrf(w, "form error: %v", err)
 		return
 	}
-	s.AddMessage(r.FormValue("text"), data.MY_SPACE)
+	c.Store.AddMessage(r.FormValue("text"), data.MY_SPACE)
 
 	tmpl := templates.Index{
-		Messages: s.GetMessages(data.MY_SPACE),
+		Messages: c.Store.GetMessages(data.MY_SPACE),
 		RoomURL:  roomURL,
 	}
 	if err := tmpl.Render(w); err != nil {
@@ -52,12 +56,12 @@ func CreateDrip(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func DeleteDrip(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) DeleteDrip(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		utils.WriteStrf(w, "form error: %v", err)
 		return
 	}
 	text := r.FormValue("text")
-	s.DeleteMessage(text, data.MY_SPACE)
+	c.Store.DeleteMessage(text, data.MY_SPACE)
 
 }

@@ -6,10 +6,12 @@ import (
 	"io"
 )
 
-//go:embed *.tmpl
-var templateFS embed.FS
+var (
+	tmpl *template.Template
 
-var tmpl *template.Template
+	//go:embed *.tmpl
+	templateFS embed.FS
+)
 
 type Index struct {
 	Messages []string

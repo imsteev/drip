@@ -2,6 +2,7 @@ package main
 
 import (
 	"drip/data"
+	"drip/handlers"
 	"log"
 	"net/http"
 	"time"
@@ -9,12 +10,6 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 )
-
-var s *data.Store
-
-func init() {
-	s = new(data.Store)
-}
 
 func main() {
 
@@ -24,11 +19,14 @@ func main() {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(60 * time.Second))
 
-	r.Post("/drip", CreateDrip)
-	r.Delete("/drip", DeleteDrip)
+	ctrl := handlers.Controller{
+		Store: new(data.Store),
+	}
 
-	r.Get("/space/{spaceID}", GetSpace)
-	r.Get("/", GetMainPage)
+	r.Post("/drip", ctrl.CreateDrip)
+	r.Delete("/drip", ctrl.DeleteDrip)
+	r.Get("/space/{spaceID}", ctrl.GetSpace)
+	r.Get("/", ctrl.GetMainPage)
 
 	err := http.ListenAndServe(":3000", r)
 	if err != nil {
