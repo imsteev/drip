@@ -13,18 +13,15 @@ var (
 	templateFS embed.FS
 )
 
+func init() {
+	tmpl = template.Must(template.New("templates").ParseFS(templateFS, "*.tmpl"))
+}
+
 type Index struct {
 	Messages []string
 	RoomURL  string
 }
 
 func (it Index) Render(w io.Writer) error {
-	if tmpl == nil {
-		var err error
-		if tmpl, err = template.New("index").
-			ParseFS(templateFS, "*.tmpl"); err != nil {
-			return err
-		}
-	}
 	return tmpl.ExecuteTemplate(w, "base.tmpl", it)
 }
