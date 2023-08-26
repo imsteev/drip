@@ -1,6 +1,6 @@
 {{ define "body" }}
 <main>
-  <div>
+  <div id="main-input">
     <h1>Drip</h1>
     <div>
       <input
@@ -18,22 +18,28 @@
       <input id="upload-file" type="file" />
     </div>
   </div>
-  {{if . }}
-  <div>
-    <h2>Your drip</h2>
-    <ul>
+  <div id="drip-container">
+    <h2>Recent</h2>
+    <div style="display: flex; flex-wrap: wrap">
       {{ range . }}
-      <form hx-delete="/drip?text={{.}}">
-        <li>
+      <form
+        hx-delete="/drip?text={{.}}"
+        hx-swap="outerHTML"
+        style="margin: 16px; border-radius: 16px"
+      >
+        <div
+          style="
+            border: 2px solid chocolate;
+            padding: 16px;
+            border-radius: 16px;
+          "
+        >
           {{ println .}}
           <button>clear</button>
-        </li>
+        </div>
       </form>
-      {{
-        end
-      }}
-    </ul>
+      {{ end }}
+    </div>
   </div>
-  {{ end }}
 </main>
 {{ end }}
