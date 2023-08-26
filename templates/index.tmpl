@@ -1,22 +1,27 @@
 {{ define "body" }}
 <main>
-  <div id="main-input">
-    <h1>Drip</h1>
-    <div>
-      <input
-        id="text-input"
-        name="text"
-        type="text"
-        placeholder="What do you want to share?"
-        hx-post="/drip"
-        hx-target="body"
-      />
-      <div style="margin: 8px 8px 0 0; text-align: right">enter to drip</div>
+  <div style="display: flex">
+    <div id="main-input">
+      <div style="display: flex; flex-direction: column">
+        <h1>Drip</h1>
+        <div>
+          <input
+            id="text-input"
+            name="text"
+            type="text"
+            placeholder="What do you want to share?"
+            hx-post="/drip"
+            hx-target="body"
+          />
+          <div>enter to drip, or <input id="upload-file" type="file" /></div>
+        </div>
+        <br />
+      </div>
     </div>
-    <p>or</p>
-    <div style="display: flex; align-items: center">
-      <input id="upload-file" type="file" />
-    </div>
+    <img
+      src="https://chart.googleapis.com/chart?cht=qr&chl={{ .RoomURL }}&chs=160x160&chld=L|0"
+      class="qr-code img-thumbnail img-responsive"
+    />
   </div>
   <div id="drip-container">
     <h2>Recent</h2>
@@ -32,18 +37,16 @@
             border: 1px solid chocolate;
             padding: 16px;
             border-radius: 16px;
+            background-color: peachpuff;
+            filter: drop-shadow(0px 4px 8px chocolate);
           "
         >
           {{ println .}}
-          <button>clear</button>
+          <button>x</button>
         </div>
       </form>
       {{ end }}
     </div>
-    <img
-      src="https://chart.googleapis.com/chart?cht=qr&chl={{ .RoomURL }}&chs=160x160&chld=L|0"
-      class="qr-code img-thumbnail img-responsive"
-    />
   </div>
   <script>
     window.addEventListener("keydown", () => {
