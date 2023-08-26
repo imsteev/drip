@@ -21,7 +21,7 @@
   <div id="drip-container">
     <h2>Recent</h2>
     <div style="display: flex; flex-wrap: wrap">
-      {{ range . }}
+      {{ range.Messages }}
       <form
         hx-delete="/drip?text={{.}}"
         hx-swap="outerHTML"
@@ -40,6 +40,10 @@
       </form>
       {{ end }}
     </div>
+    <img
+      src="https://chart.googleapis.com/chart?cht=qr&chl={{ .RoomURL }}&chs=160x160&chld=L|0"
+      class="qr-code img-thumbnail img-responsive"
+    />
   </div>
   <script>
     window.addEventListener("keydown", () => {

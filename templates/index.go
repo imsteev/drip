@@ -13,6 +13,7 @@ var tmpl *template.Template
 
 type Index struct {
 	Messages []string
+	RoomURL  string
 }
 
 func (it Index) Render(w io.Writer) error {
@@ -23,5 +24,5 @@ func (it Index) Render(w io.Writer) error {
 			return err
 		}
 	}
-	return tmpl.ExecuteTemplate(w, "base.tmpl", it.Messages)
+	return tmpl.ExecuteTemplate(w, "base.tmpl", it)
 }

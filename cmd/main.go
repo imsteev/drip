@@ -26,6 +26,8 @@ func main() {
 
 	r.Post("/drip", CreateDrip)
 	r.Delete("/drip", DeleteDrip)
+
+	r.Get("/space/{spaceID}", GetSpace)
 	r.Get("/", GetMainPage)
 
 	err := http.ListenAndServe(":3000", r)

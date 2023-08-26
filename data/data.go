@@ -1,21 +1,23 @@
 package data
 
-type Store struct{}
+type SpaceID string
 
 var (
-	spaces = make(map[int][]string)
+	spaces = make(map[SpaceID][]string)
 
-	MY_SPACE = 1 // simplify initial development
+	MY_SPACE SpaceID = "white-rabbit" // simplify initial development
 )
 
-func (s Store) AddMessage(msg string, spaceID int) {
+type Store struct{}
+
+func (s Store) AddMessage(msg string, spaceID SpaceID) {
 	if msg == "" {
 		return
 	}
 	spaces[spaceID] = append(spaces[spaceID], msg)
 }
 
-func (s Store) GetMessages(spaceID int) []string {
+func (s Store) GetMessages(spaceID SpaceID) []string {
 	msgs, ok := spaces[spaceID]
 	if !ok {
 		return nil
@@ -23,7 +25,7 @@ func (s Store) GetMessages(spaceID int) []string {
 	return msgs
 }
 
-func (s Store) DeleteMessage(msg string, spaceID int) {
+func (s Store) DeleteMessage(msg string, spaceID SpaceID) {
 	if spaces[spaceID] != nil {
 		newMsgs := []string{}
 		for _, m := range spaces[spaceID] {
