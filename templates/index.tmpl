@@ -2,14 +2,13 @@
 <main>
   <!-- TODO: by default the QR code should be obfuscated. -->
   <img
-    style="position: absolute; top: 5%; left: 85%"
     src="https://chart.googleapis.com/chart?cht=qr&chl={{ .RoomURL }}&chs=160x160&chld=L|0"
     class="qr-code img-thumbnail img-responsive"
   />
-  <div style="display: flex; align-items: center; width: 100%">
-    <div style="display: flex; flex-direction: column">
+  <div>
+    <div>
       <h1>Drip</h1>
-      <div>
+      <div class="box">
         <input
           id="text-input"
           name="text"
@@ -18,13 +17,15 @@
           hx-post="/drip"
           hx-target="body"
         />
-        <div>enter to drip, or <input id="upload-file" type="file" /></div>
+        <section class="actions margin">
+          <button type="button">+ new drip</button>
+        </section>
       </div>
       <br />
     </div>
   </div>
   <div id="drip-container">
-    <div id="drip-items">
+    <div style="display: flex" class="flex-wrap:wrap">
       {{ range.Messages }}
       <form
         hx-delete="/drip?text={{.}}"
@@ -40,6 +41,7 @@
     </div>
   </div>
   <script>
+    // make it faster/easier to create new drip
     window.addEventListener("keydown", () => {
       if (document.activeElement != document.getElementById("text-input")) {
         document.getElementById("text-input").focus();

@@ -1,4 +1,9 @@
 {{ define "scripts"}}
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/missing.css@1.0.9/dist/missing.min.css"
+/>
+
 <script
   src="https://unpkg.com/htmx.org@1.9.4"
   integrity="sha384-zUfuhFKKZCbHTY6aRR46gxiqszMk5tcHjsVFxnUo8VMus4kHGVdIYVbOYYNlKmHV"
@@ -13,7 +18,7 @@
 
   #text-input {
     padding: 16px;
-    width: 512px;
+    width: 100%;
     border: solid 1px chocolate;
     border-radius: 8px;
   }
@@ -43,6 +48,17 @@
     display: flex;
     flex-wrap: wrap;
     gap: 24px;
+  }
+
+  .qr-code {
+    position: absolute;
+    top: 5%;
+    left: 85%;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
   }
 </style>
 {{ end }}
