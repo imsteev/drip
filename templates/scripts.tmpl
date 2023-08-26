@@ -8,23 +8,14 @@
   body {
     display: block;
     background-color: ghostwhite;
-  }
-
-  #main-input {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 24px;
-
-    border: solid 1px ghostwhite;
-    border-radius: 18px;
+    padding: 16px;
   }
 
   #text-input {
     padding: 16px;
-    width: 256px;
+    width: 512px;
     border: solid 1px chocolate;
+    border-radius: 8px;
   }
 
   #upload-file {
@@ -34,11 +25,10 @@
 
   #drip-container {
     display: flex;
-    max-width: 50%;
+    max-width: 512px;
     flex-direction: column;
     align-items: start;
     justify-content: center;
-    padding: 24px;
   }
 
   #drip-container .drip {
@@ -47,6 +37,12 @@
     border-radius: 16px;
     background-color: peachpuff;
     filter: drop-shadow(0px 4px 8px chocolate);
+  }
+
+  #drip-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
   }
 </style>
 {{ end }}

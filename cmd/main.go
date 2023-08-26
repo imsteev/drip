@@ -2,7 +2,6 @@ package main
 
 import (
 	"drip/data"
-	"drip/handlers"
 	"log"
 	"net/http"
 	"time"
@@ -19,7 +18,7 @@ func main() {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(60 * time.Second))
 
-	ctrl := handlers.Controller{
+	ctrl := Controller{
 		Store: new(data.Store),
 	}
 
@@ -28,8 +27,8 @@ func main() {
 	r.Get("/space/{spaceID}", ctrl.GetSpace)
 	r.Get("/", ctrl.GetMainPage)
 
-	err := http.ListenAndServe(":3000", r)
-	if err != nil {
+	log.Printf("listening on %s\n", ":3000")
+	if err := http.ListenAndServe(":3000", r); err != nil {
 		log.Fatalf("server crashed: %s", err)
 	}
 }

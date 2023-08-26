@@ -1,32 +1,30 @@
 {{ define "body" }}
 <main>
+  <!-- TODO: by default the QR code should be obfuscated. -->
   <img
-    style="position: absolute; left: 85%; top: 75%"
+    style="position: absolute; top: 5%; left: 85%"
     src="https://chart.googleapis.com/chart?cht=qr&chl={{ .RoomURL }}&chs=160x160&chld=L|0"
     class="qr-code img-thumbnail img-responsive"
   />
   <div style="display: flex; align-items: center; width: 100%">
-    <div id="main-input">
-      <div style="display: flex; flex-direction: column">
-        <h1>Drip</h1>
-        <div>
-          <input
-            id="text-input"
-            name="text"
-            type="text"
-            placeholder="What do you want to share?"
-            hx-post="/drip"
-            hx-target="body"
-          />
-          <div>enter to drip, or <input id="upload-file" type="file" /></div>
-        </div>
-        <br />
+    <div style="display: flex; flex-direction: column">
+      <h1>Drip</h1>
+      <div>
+        <input
+          id="text-input"
+          name="text"
+          type="text"
+          placeholder="What do you want to share?"
+          hx-post="/drip"
+          hx-target="body"
+        />
+        <div>enter to drip, or <input id="upload-file" type="file" /></div>
       </div>
+      <br />
     </div>
   </div>
   <div id="drip-container">
-    <h2>Recent</h2>
-    <div style="display: flex; flex-wrap: wrap; gap: 16px">
+    <div id="drip-items">
       {{ range.Messages }}
       <form
         hx-delete="/drip?text={{.}}"
