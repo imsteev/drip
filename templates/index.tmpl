@@ -1,6 +1,11 @@
 {{ define "body" }}
 <main>
-  <div style="display: flex">
+  <img
+    style="position: absolute; left: 85%; top: 75%"
+    src="https://chart.googleapis.com/chart?cht=qr&chl={{ .RoomURL }}&chs=160x160&chld=L|0"
+    class="qr-code img-thumbnail img-responsive"
+  />
+  <div style="display: flex; align-items: center; width: 100%">
     <div id="main-input">
       <div style="display: flex; flex-direction: column">
         <h1>Drip</h1>
@@ -18,10 +23,6 @@
         <br />
       </div>
     </div>
-    <img
-      src="https://chart.googleapis.com/chart?cht=qr&chl={{ .RoomURL }}&chs=160x160&chld=L|0"
-      class="qr-code img-thumbnail img-responsive"
-    />
   </div>
   <div id="drip-container">
     <h2>Recent</h2>
