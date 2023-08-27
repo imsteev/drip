@@ -6,47 +6,47 @@
     class="qr-code img-thumbnail img-responsive"
   />
   <div>
-    <div>
-      <h1>Drip</h1>
-      <div class="box">
-        <input
-          id="text-input"
-          name="text"
-          type="text"
-          placeholder="What do you want to share?"
-          hx-post="/drip"
-          hx-target="body"
-        />
-        <section class="actions margin">
-          <button type="button">+ new drip</button>
-        </section>
-      </div>
-      <br />
-    </div>
-  </div>
-  <div id="drip-container">
-    <div style="display: flex" class="flex-wrap:wrap">
-      {{ range.Messages }}
-      <form
-        hx-delete="/drip?text={{.}}"
-        hx-swap="outerHTML"
-        style="border-radius: 16px"
-      >
-        <div class="drip">
-          {{ println .}}
-          <button>x</button>
-        </div>
+    <h1>Drip</h1>
+    <section class="tool-bar">
+      <button type="button" hx-post="/spaces" hx-target="body">
+        New space
+      </button>
+      <hr aria-orientation="vertical" />
+      <form hx-get="/spaces" hx-target="body" class="tool-bar">
+        <input type="text" name="id" />
+        <button>Go to space</button>
       </form>
-      {{ end }}
-    </div>
+    </section>
+    {{ if ne .Space "" }}
+    <form class="box" hx-post="/spaces/{{.Space}}/drip" hx-target="body">
+      <input
+        id="text-input"
+        name="text"
+        type="text"
+        placeholder="What do you want to share?"
+      />
+      <section class="actions margin">
+        <button>+ new</button>
+      </section>
+      space:
+      <span name="spaceID" value="{{ .Space }}">{{.Space}}</span>
+    </form>
+    {{ end }}
+    <br />
   </div>
-  <script>
-    // make it faster/easier to create new drip
-    window.addEventListener("keydown", () => {
-      if (document.activeElement != document.getElementById("text-input")) {
-        document.getElementById("text-input").focus();
-      }
-    });
-  </script>
+  <div style="display: flex; gap: 16px" class="flex-wrap:wrap">
+    {{ range.Messages }}
+    <form
+      hx-delete="/drip?text={{.}}"
+      hx-swap="outerHTML"
+      style="border-radius: 16px"
+    >
+      <div class="drip">
+        {{ println .}}
+        <button>x</button>
+      </div>
+    </form>
+    {{ end }}
+  </div>
 </main>
 {{ end }}

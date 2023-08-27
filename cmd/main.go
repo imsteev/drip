@@ -37,9 +37,10 @@ func main() {
 		Store: new(data.Store),
 	}
 
-	r.Post("/drip", ctrl.CreateDrip)
 	r.Delete("/drip", ctrl.DeleteDrip)
-	r.Get("/space/{spaceID}", ctrl.GetSpace)
+	r.Post("/spaces", ctrl.NewSpace)
+	r.Get("/spaces", ctrl.GetSpace)
+	r.Post("/spaces/{spaceID}/drip", ctrl.CreateDrip)
 	r.Get("/", ctrl.GetMainPage)
 
 	addr := ":" + PORT

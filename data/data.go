@@ -10,6 +10,13 @@ var (
 
 type Store struct{}
 
+func (s Store) AddSpace(spaceID string) {
+	_, ok := spaces[SpaceID(spaceID)]
+	if !ok {
+		spaces[SpaceID(spaceID)] = []string{}
+	}
+}
+
 func (s Store) AddMessage(msg string, spaceID SpaceID) {
 	if msg == "" {
 		return

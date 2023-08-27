@@ -20,6 +20,7 @@ func init() {
 type Index struct {
 	Messages []string
 	RoomURL  string
+	Space    string
 }
 
 func (it Index) Render(w io.Writer) error {

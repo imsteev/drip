@@ -4,8 +4,9 @@ import (
 	"drip/data"
 	"drip/templates"
 	"drip/utils"
-	"fmt"
+	"math/rand"
 	"net/http"
+	"strconv"
 
 	"github.com/go-chi/chi"
 )
@@ -15,10 +16,7 @@ type Controller struct {
 }
 
 func (c *Controller) GetMainPage(w http.ResponseWriter, r *http.Request) {
-	tmpl := templates.Index{
-		Messages: c.Store.GetMessages(data.MY_SPACE),
-		RoomURL:  BASE_URL + "/space/" + string(data.MY_SPACE),
-	}
+	tmpl := templates.Index{}
 	if err := tmpl.Render(w); err != nil {
 		utils.WriteStrf(w, "error generating template: %v", err)
 	}
@@ -26,12 +24,27 @@ func (c *Controller) GetMainPage(w http.ResponseWriter, r *http.Request) {
 
 func (c *Controller) GetSpace(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	spaceID := chi.URLParam(r, "spaceID")
-	fmt.Println(spaceID, 1)
+	spaceID := r.URL.Query().Get("id")
 	tmpl := templates.Index{
 		Messages: c.Store.GetMessages(data.SpaceID(spaceID)),
-		RoomURL:  BASE_URL + "/space/" + string(data.MY_SPACE),
+		RoomURL:  BASE_URL + "/spaces/" + spaceID,
+		Space:    spaceID,
 	}
+	w.Header().Add("HX-Push-Url", "/spaces/"+spaceID)
+	if err := tmpl.Render(w); err != nil {
+		utils.WriteStrf(w, "error generating template: %v", err)
+	}
+}
+
+func (c *Controller) NewSpace(w http.ResponseWriter, r *http.Request) {
+	newSpaceID := strconv.Itoa(rand.Int())
+	c.Store.AddSpace(newSpaceID)
+	tmpl := templates.Index{
+		Messages: c.Store.GetMessages(data.SpaceID(newSpaceID)),
+		RoomURL:  BASE_URL + "/spaces/" + newSpaceID,
+		Space:    newSpaceID,
+	}
+	w.Header().Add("HX-Push-Url", "/spaces/"+newSpaceID)
 	if err := tmpl.Render(w); err != nil {
 		utils.WriteStrf(w, "error generating template: %v", err)
 	}
@@ -42,11 +55,18 @@ func (c *Controller) CreateDrip(w http.ResponseWriter, r *http.Request) {
 		utils.WriteStrf(w, "form error: %v", err)
 		return
 	}
-	c.Store.AddMessage(r.FormValue("text"), data.MY_SPACE)
+
+	space := chi.URLParam(r, "spaceID")
+	if space == "" {
+		space = strconv.Itoa(rand.Int())
+	}
+
+	c.Store.AddMessage(r.FormValue("text"), data.SpaceID(space))
 
 	tmpl := templates.Index{
-		Messages: c.Store.GetMessages(data.MY_SPACE),
-		RoomURL:  BASE_URL + "/space/" + string(data.MY_SPACE),
+		Messages: c.Store.GetMessages(data.SpaceID(space)),
+		RoomURL:  BASE_URL + "/spaces/" + space,
+		Space:    space,
 	}
 	if err := tmpl.Render(w); err != nil {
 		utils.WriteStrf(w, "error generating template: %v", err)
