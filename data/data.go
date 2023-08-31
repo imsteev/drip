@@ -1,45 +1,77 @@
 package data
 
+import (
+	"database/sql"
+	"errors"
+)
+
 type SpaceID string
 
 var (
-	spaces = make(map[SpaceID][]string)
-
-	MY_SPACE SpaceID = "white-rabbit" // simplify initial development
+	spaces = make(map[SpaceID][]*Message)
 )
 
-type Store struct{}
+type Store struct {
+	DB *sql.DB
+}
+
+type Message struct {
+	ID      int
+	SpaceID int
+	Message string
+}
 
 func (s Store) AddSpace(spaceID string) {
 	_, ok := spaces[SpaceID(spaceID)]
 	if !ok {
-		spaces[SpaceID(spaceID)] = []string{}
+		spaces[SpaceID(spaceID)] = []*Message{}
 	}
 }
 
-func (s Store) AddMessage(msg string, spaceID SpaceID) {
+func (s Store) AddMessage(msg string, spaceID SpaceID) error {
 	if msg == "" {
-		return
+		return errors.New("message must be non-empty")
 	}
-	spaces[spaceID] = append(spaces[spaceID], msg)
+
+	_, err := s.DB.Exec(`INSERT INTO messages (message, spaceID) VALUES (?, ?)`, msg, spaceID)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func (s Store) GetMessages(spaceID SpaceID) []string {
-	msgs, ok := spaces[spaceID]
-	if !ok {
-		return nil
+func (s Store) DeleteMessage(msg string, spaceID SpaceID) error {
+	stmt, err := s.DB.Prepare(`DELETE FROM messages WHERE spaceID = ?`)
+	if err != nil {
+		return err
 	}
-	return msgs
+	defer stmt.Close()
+	if _, err := stmt.Exec(spaceID); err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func (s Store) DeleteMessage(msg string, spaceID SpaceID) {
-	if spaces[spaceID] != nil {
-		newMsgs := []string{}
-		for _, m := range spaces[spaceID] {
-			if m != msg {
-				newMsgs = append(newMsgs, m)
-			}
+type MessageGateway struct{}
+
+func (s *Store) FindMessages(spaceID SpaceID) ([]*Message, error) {
+	rows, err := s.DB.Query(`SELECT * FROM messages WHERE spaceID = $1`, spaceID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var msgs []*Message
+	// Loop through rows, using Scan to assign column data to struct fields.
+	for rows.Next() {
+		var msg Message
+		if err := rows.Scan(&msg.ID, &msg.Message, &msg.SpaceID); err != nil {
+			return nil, err
 		}
-		spaces[spaceID] = newMsgs
+		msgs = append(msgs, &msg)
 	}
+
+	return msgs, nil
 }

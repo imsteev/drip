@@ -4,6 +4,7 @@ import (
 	"drip/data"
 	"drip/templates"
 	"drip/utils"
+	"fmt"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -24,9 +25,13 @@ func (c *Controller) GetMainPage(w http.ResponseWriter, r *http.Request) {
 
 func (c *Controller) GetSpace(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	spaceID := r.URL.Query().Get("id")
+	spaceID := chi.URLParam(r, "spaceID")
+	msgs, err := c.Store.FindMessages(data.SpaceID(spaceID))
+	if err != nil {
+		utils.WriteStrf(w, "error generating template: %v", err)
+	}
 	tmpl := templates.Index{
-		Messages: c.Store.GetMessages(data.SpaceID(spaceID)),
+		Messages: msgs,
 		RoomURL:  BASE_URL + "/spaces/" + spaceID,
 		Space:    spaceID,
 	}
@@ -39,8 +44,12 @@ func (c *Controller) GetSpace(w http.ResponseWriter, r *http.Request) {
 func (c *Controller) NewSpace(w http.ResponseWriter, r *http.Request) {
 	newSpaceID := strconv.Itoa(rand.Int())
 	c.Store.AddSpace(newSpaceID)
+	msgs, err := c.Store.FindMessages(data.SpaceID(newSpaceID))
+	if err != nil {
+		utils.WriteStrf(w, "error generating template: %v", err)
+	}
 	tmpl := templates.Index{
-		Messages: c.Store.GetMessages(data.SpaceID(newSpaceID)),
+		Messages: msgs,
 		RoomURL:  BASE_URL + "/spaces/" + newSpaceID,
 		Space:    newSpaceID,
 	}
@@ -63,8 +72,13 @@ func (c *Controller) CreateDrip(w http.ResponseWriter, r *http.Request) {
 
 	c.Store.AddMessage(r.FormValue("text"), data.SpaceID(space))
 
+	msgs, err := c.Store.FindMessages(data.SpaceID(space))
+	if err != nil {
+		utils.WriteStrf(w, "error generating template: %v", err)
+	}
+
 	tmpl := templates.Index{
-		Messages: c.Store.GetMessages(data.SpaceID(space)),
+		Messages: msgs,
 		RoomURL:  BASE_URL + "/spaces/" + space,
 		Space:    space,
 	}
@@ -78,7 +92,9 @@ func (c *Controller) DeleteDrip(w http.ResponseWriter, r *http.Request) {
 		utils.WriteStrf(w, "form error: %v", err)
 		return
 	}
+	space := chi.URLParam(r, "spaceID")
+
 	text := r.FormValue("text")
-	c.Store.DeleteMessage(text, data.MY_SPACE)
+	fmt.Println(space, text)
 
 }
