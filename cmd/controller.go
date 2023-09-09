@@ -1,7 +1,7 @@
 package main
 
 import (
-	"drip/data"
+	"drip/db"
 	"drip/templates"
 	"drip/utils"
 	"fmt"
@@ -13,7 +13,7 @@ import (
 )
 
 type Controller struct {
-	Store *data.Store
+	Store *db.Store
 }
 
 func (c *Controller) GetMainPage(w http.ResponseWriter, r *http.Request) {
@@ -24,7 +24,7 @@ func (c *Controller) GetMainPage(w http.ResponseWriter, r *http.Request) {
 func (c *Controller) GetSpace(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	spaceID := chi.URLParam(r, "spaceID")
-	msgs, err := c.Store.FindMessages(data.SpaceID(spaceID))
+	msgs, err := c.Store.FindMessages(db.SpaceID(spaceID))
 	if err != nil {
 		utils.WriteStrf(w, "error generating template: %v", err)
 	}
@@ -61,9 +61,9 @@ func (c *Controller) CreateDrip(w http.ResponseWriter, r *http.Request) {
 
 	space := chi.URLParam(r, "spaceID")
 
-	c.Store.AddMessage(r.FormValue("text"), data.SpaceID(space))
+	c.Store.AddMessage(r.FormValue("text"), db.SpaceID(space))
 
-	msgs, err := c.Store.FindMessages(data.SpaceID(space))
+	msgs, err := c.Store.FindMessages(db.SpaceID(space))
 	if err != nil {
 		utils.WriteStrf(w, "error generating template: %v", err)
 	}
@@ -90,5 +90,5 @@ func (c *Controller) DeleteDrip(w http.ResponseWriter, r *http.Request) {
 	text := r.FormValue("text")
 	fmt.Println(space, text)
 
-	c.Store.DeleteMessage(text, data.SpaceID(space))
+	c.Store.DeleteMessage(text, db.SpaceID(space))
 }

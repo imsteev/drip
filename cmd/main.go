@@ -2,7 +2,7 @@ package main
 
 import (
 	"database/sql"
-	"drip/data"
+	"drip/db"
 	"log"
 	"net/http"
 	"os"
@@ -36,15 +36,15 @@ func main() {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(60 * time.Second))
 
-	db, err := sql.Open("sqlite3", "./data/dev.db")
+	dbSqlite, err := sql.Open("sqlite3", "./data/dev.db")
 	if err != nil {
 		log.Fatalf("failed to start database: %s", err)
 	}
-	defer db.Close()
+	defer dbSqlite.Close()
 
 	ctrl := Controller{
-		Store: &data.Store{
-			DB: db,
+		Store: &db.Store{
+			DB: dbSqlite,
 		},
 	}
 
