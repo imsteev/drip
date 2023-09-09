@@ -25,3 +25,4 @@ primary_region = "ewr"
 [mounts]
   source = "db_prod"
   destination = "/data"
+  processes = ["app"]
