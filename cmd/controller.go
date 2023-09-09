@@ -60,9 +60,6 @@ func (c *Controller) CreateDrip(w http.ResponseWriter, r *http.Request) {
 	}
 
 	space := chi.URLParam(r, "spaceID")
-	if space == "" {
-		space = strconv.Itoa(rand.Int())
-	}
 
 	c.Store.AddMessage(r.FormValue("text"), data.SpaceID(space))
 
@@ -85,13 +82,13 @@ func (c *Controller) CreateDrip(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) DeleteDrip(w http.ResponseWriter, r *http.Request) {
+	space := chi.URLParam(r, "spaceID")
 	if err := r.ParseForm(); err != nil {
 		utils.WriteStrf(w, "form error: %v", err)
 		return
 	}
-	space := chi.URLParam(r, "spaceID")
-
 	text := r.FormValue("text")
 	fmt.Println(space, text)
 
+	c.Store.DeleteMessage(text, data.SpaceID(space))
 }

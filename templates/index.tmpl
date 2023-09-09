@@ -39,11 +39,11 @@
   <div style="display: flex; gap: 16px" class="flex-wrap:wrap">
     {{ range.Messages }}
     <form
-      hx-delete="{{ $.DeleteURL }}"
+      hx-delete="{{ $.DeleteURL }}?text={{ . }}"
       hx-swap="outerHTML"
       style="border-radius: 16px"
     >
-      <div class="drip" name="text" value="{{ . }}">
+      <div class="drip">
         {{ println . }}
         <button>x</button>
       </div>

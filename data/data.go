@@ -7,10 +7,6 @@ import (
 
 type SpaceID string
 
-var (
-	spaces = make(map[SpaceID][]*Message)
-)
-
 type Store struct {
 	DB *sql.DB
 }
@@ -19,13 +15,6 @@ type Message struct {
 	ID      int
 	SpaceID int
 	Message string
-}
-
-func (s Store) AddSpace(spaceID string) {
-	_, ok := spaces[SpaceID(spaceID)]
-	if !ok {
-		spaces[SpaceID(spaceID)] = []*Message{}
-	}
 }
 
 func (s Store) AddMessage(msg string, spaceID SpaceID) error {
@@ -42,19 +31,17 @@ func (s Store) AddMessage(msg string, spaceID SpaceID) error {
 }
 
 func (s Store) DeleteMessage(msg string, spaceID SpaceID) error {
-	stmt, err := s.DB.Prepare(`DELETE FROM messages WHERE spaceID = ?`)
+	stmt, err := s.DB.Prepare(`DELETE FROM messages WHERE spaceID = ? AND message = ?`)
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
-	if _, err := stmt.Exec(spaceID); err != nil {
+	if _, err := stmt.Exec(spaceID, msg); err != nil {
 		return err
 	}
 
 	return nil
 }
-
-type MessageGateway struct{}
 
 func (s *Store) FindMessages(spaceID SpaceID) ([]*Message, error) {
 	rows, err := s.DB.Query(`SELECT * FROM messages WHERE spaceID = $1`, spaceID)
