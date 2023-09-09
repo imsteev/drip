@@ -43,8 +43,8 @@
       hx-swap="outerHTML"
       style="border-radius: 16px"
     >
-      <div class="drip" name="text" value="{{ .Message }}">
-        {{ println.Message }}
+      <div class="drip" name="text" value="{{ . }}">
+        {{ println . }}
         <button>x</button>
       </div>
     </form>

@@ -18,9 +18,7 @@ type Controller struct {
 
 func (c *Controller) GetMainPage(w http.ResponseWriter, r *http.Request) {
 	tmpl := templates.Index{}
-	if err := tmpl.Render(w); err != nil {
-		utils.WriteStrf(w, "error generating template: %v", err)
-	}
+	tmpl.MustRender(w)
 }
 
 func (c *Controller) GetSpace(w http.ResponseWriter, r *http.Request) {
@@ -30,15 +28,19 @@ func (c *Controller) GetSpace(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.WriteStrf(w, "error generating template: %v", err)
 	}
+
+	strs := []string{}
+	for _, m := range msgs {
+		strs = append(strs, m.Message)
+	}
 	tmpl := templates.Index{
-		Messages: msgs,
+		Messages: strs,
 		RoomURL:  BASE_URL + "/spaces/" + spaceID,
 		Space:    spaceID,
 	}
 	w.Header().Add("HX-Push-Url", "/spaces/"+spaceID)
-	if err := tmpl.Render(w); err != nil {
-		utils.WriteStrf(w, "error generating template: %v", err)
-	}
+
+	tmpl.MustRender(w)
 }
 
 func (c *Controller) NewSpace(w http.ResponseWriter, r *http.Request) {
@@ -48,15 +50,18 @@ func (c *Controller) NewSpace(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.WriteStrf(w, "error generating template: %v", err)
 	}
+	strs := []string{}
+	for _, m := range msgs {
+		strs = append(strs, m.Message)
+	}
 	tmpl := templates.Index{
-		Messages: msgs,
+		Messages: strs,
 		RoomURL:  BASE_URL + "/spaces/" + newSpaceID,
 		Space:    newSpaceID,
 	}
 	w.Header().Add("HX-Push-Url", "/spaces/"+newSpaceID)
-	if err := tmpl.Render(w); err != nil {
-		utils.WriteStrf(w, "error generating template: %v", err)
-	}
+
+	tmpl.MustRender(w)
 }
 
 func (c *Controller) CreateDrip(w http.ResponseWriter, r *http.Request) {
@@ -77,14 +82,17 @@ func (c *Controller) CreateDrip(w http.ResponseWriter, r *http.Request) {
 		utils.WriteStrf(w, "error generating template: %v", err)
 	}
 
+	strs := []string{}
+	for _, m := range msgs {
+		strs = append(strs, m.Message)
+	}
 	tmpl := templates.Index{
-		Messages: msgs,
+		Messages: strs,
 		RoomURL:  BASE_URL + "/spaces/" + space,
 		Space:    space,
 	}
-	if err := tmpl.Render(w); err != nil {
-		utils.WriteStrf(w, "error generating template: %v", err)
-	}
+
+	tmpl.MustRender(w)
 }
 
 func (c *Controller) DeleteDrip(w http.ResponseWriter, r *http.Request) {
