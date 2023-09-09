@@ -36,7 +36,7 @@ func main() {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(60 * time.Second))
 
-	dbSqlite, err := sql.Open("sqlite3", "./data/dev.db")
+	dbSqlite, err := sql.Open("sqlite3", "./data/sqlite3.db")
 	if err != nil {
 		log.Fatalf("failed to start database: %s", err)
 	}
