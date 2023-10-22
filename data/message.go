@@ -48,7 +48,7 @@ func (mg *MessageGateway) Get(id int) (*models.Message, error) {
 	return nil, fmt.Errorf("no message with id %d", id)
 }
 
-func (mg *MessageGateway) GetBySpaceID(spaceID int) ([]*models.Message, error) {
+func (mg *MessageGateway) FindBySpaceID(spaceID int) ([]*models.Message, error) {
 	var spaceMsgs []*models.Message
 	for _, m := range messages {
 		if m.SpaceID == spaceID {

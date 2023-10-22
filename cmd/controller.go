@@ -24,35 +24,30 @@ func (c *Controller) GetMainPage(w http.ResponseWriter, r *http.Request) {
 
 func (c *Controller) GetSpace(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	spaceID := chi.URLParam(r, "spaceID")
+	spaceID := mustAtoi(chi.URLParam(r, "spaceID"))
 
-	msgs, err := c.MessageGateway.GetBySpaceID(mustAtoi(spaceID))
+	msgs, err := c.MessageGateway.FindBySpaceID(spaceID)
 	if err != nil {
 		writeStrf(w, "%v", err)
 	}
 
-	strs := []string{}
-	for _, m := range msgs {
-		strs = append(strs, m.Text)
-	}
-
 	tmpl := templates.Index{
-		Messages: strs,
-		RoomURL:  BASE_URL + "/spaces/" + spaceID,
-		Space:    spaceID,
+		Messages: msgs,
+		RoomURL:  fmt.Sprintf("%s/spaces/%d", BASE_URL, spaceID),
+		SpaceID:  spaceID,
 	}
-	w.Header().Add("HX-Push-Url", "/spaces/"+spaceID)
+	w.Header().Add("HX-Push-Url", fmt.Sprintf("/spaces/%d", spaceID))
 
 	tmpl.MustRender(w)
 }
 
 func (c *Controller) NewSpace(w http.ResponseWriter, r *http.Request) {
-	newSpaceID := strconv.Itoa(rand.Int())
+	newSpaceID := rand.Int()
 	tmpl := templates.Index{
-		RoomURL: BASE_URL + "/spaces/" + newSpaceID,
-		Space:   newSpaceID,
+		RoomURL: fmt.Sprintf("%s/spaces/%d", BASE_URL, newSpaceID),
+		SpaceID: newSpaceID,
 	}
-	w.Header().Add("HX-Push-Url", "/spaces/"+newSpaceID)
+	w.Header().Add("HX-Push-Url", fmt.Sprintf("/spaces/%d", newSpaceID))
 	tmpl.MustRender(w)
 }
 
@@ -62,25 +57,22 @@ func (c *Controller) CreateMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	spaceID := chi.URLParam(r, "spaceID")
+	spaceID := mustAtoi(chi.URLParam(r, "spaceID"))
 
-	c.MessageGateway.Create(mustAtoi(spaceID), r.FormValue("text"))
+	c.MessageGateway.Create(spaceID, r.FormValue("text"))
 
-	msgs, err := c.MessageGateway.GetBySpaceID(mustAtoi(spaceID))
+	msgs, err := c.MessageGateway.FindBySpaceID(spaceID)
 	if err != nil {
 		writeStrf(w, "%v", err)
 		return
 	}
 
-	strs := []string{}
-	for _, m := range msgs {
-		strs = append(strs, m.Text)
-	}
+	fmt.Println(spaceID, r.FormValue("text"), msgs)
 
 	tmpl := templates.Index{
-		Messages: strs,
-		RoomURL:  BASE_URL + "/spaces/" + spaceID,
-		Space:    spaceID,
+		Messages: msgs,
+		RoomURL:  fmt.Sprintf("%s/spaces/%d", BASE_URL, spaceID),
+		SpaceID:  spaceID,
 	}
 
 	tmpl.MustRender(w)

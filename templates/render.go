@@ -1,8 +1,8 @@
 package templates
 
 import (
+	"drip/data/models"
 	"embed"
-	"fmt"
 	"html/template"
 	"io"
 )
@@ -19,15 +19,12 @@ func init() {
 }
 
 type Index struct {
-	Messages []string
+	Messages []*models.Message
 	RoomURL  string
-	Space    string
-
-	DeleteURL string
+	SpaceID  int
 }
 
 func (it Index) Render(w io.Writer) error {
-	it.DeleteURL = fmt.Sprintf("/spaces/%s/drip", it.Space)
 	return tmpl.ExecuteTemplate(w, "base.tmpl", it)
 }
 
