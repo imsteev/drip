@@ -67,8 +67,6 @@ func (c *Controller) CreateMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(spaceID, r.FormValue("text"), msgs)
-
 	tmpl := templates.Index{
 		Messages: msgs,
 		RoomURL:  fmt.Sprintf("%s/spaces/%d", BASE_URL, spaceID),
