@@ -2,6 +2,7 @@ package data
 
 import (
 	"drip/data/models"
+	"fmt"
 	"math/rand"
 )
 
@@ -10,13 +11,13 @@ var messages []*models.Message
 type MessageGateway struct{}
 
 // not concurrent-safe
-func (mg *MessageGateway) Create(spaceID int, text string) *models.Message {
+func (mg *MessageGateway) Create(spaceID int, text string) (*models.Message, error) {
 	m := &models.Message{ID: rand.Int(), SpaceID: spaceID, Text: text}
 	messages = append(messages, m)
-	return m
+	return m, nil
 }
 
-func (mg *MessageGateway) DeleteByID(id int) {
+func (mg *MessageGateway) DeleteByID(id int) error {
 	updated := messages
 	for _, m := range messages {
 		if m.ID != id {
@@ -24,9 +25,10 @@ func (mg *MessageGateway) DeleteByID(id int) {
 		}
 	}
 	messages = updated
+	return nil
 }
 
-func (mg *MessageGateway) DeleteBySpaceID(spaceID int) {
+func (mg *MessageGateway) DeleteBySpaceID(spaceID int) error {
 	updated := messages
 	for _, m := range messages {
 		if m.SpaceID != spaceID {
@@ -34,23 +36,24 @@ func (mg *MessageGateway) DeleteBySpaceID(spaceID int) {
 		}
 	}
 	messages = updated
-}
-
-func (mg *MessageGateway) Get(id int) *models.Message {
-	for _, m := range messages {
-		if m.ID == id {
-			return m
-		}
-	}
 	return nil
 }
 
-func (mg *MessageGateway) GetBySpaceID(spaceID int) []*models.Message {
+func (mg *MessageGateway) Get(id int) (*models.Message, error) {
+	for _, m := range messages {
+		if m.ID == id {
+			return m, nil
+		}
+	}
+	return nil, fmt.Errorf("no message with id %d", id)
+}
+
+func (mg *MessageGateway) GetBySpaceID(spaceID int) ([]*models.Message, error) {
 	var spaceMsgs []*models.Message
 	for _, m := range messages {
 		if m.SpaceID == spaceID {
 			spaceMsgs = append(spaceMsgs, m)
 		}
 	}
-	return spaceMsgs
+	return spaceMsgs, nil
 }

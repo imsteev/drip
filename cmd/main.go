@@ -9,8 +9,6 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
-
-	_ "github.com/mattn/go-sqlite3"
 )
 
 var (
@@ -42,8 +40,8 @@ func main() {
 
 	r.Post("/spaces", ctrl.NewSpace)
 	r.Get("/spaces/{spaceID}", ctrl.GetSpace)
-	r.Post("/spaces/{spaceID}/drip", ctrl.CreateDrip)
-	r.Delete("/spaces/{spaceID}/drip", ctrl.DeleteDrip)
+	r.Post("/spaces/{spaceID}/messages", ctrl.CreateMessage)
+	r.Delete("/messages/{messageID}", ctrl.DeleteMessage)
 	r.Get("/", ctrl.GetMainPage)
 
 	addr := ":" + PORT

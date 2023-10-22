@@ -26,7 +26,10 @@ func (c *Controller) GetSpace(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	spaceID := chi.URLParam(r, "spaceID")
 
-	msgs := c.MessageGateway.GetBySpaceID(mustAtoi(spaceID))
+	msgs, err := c.MessageGateway.GetBySpaceID(mustAtoi(spaceID))
+	if err != nil {
+		writeStrf(w, "%v", err)
+	}
 
 	strs := []string{}
 	for _, m := range msgs {
@@ -53,7 +56,7 @@ func (c *Controller) NewSpace(w http.ResponseWriter, r *http.Request) {
 	tmpl.MustRender(w)
 }
 
-func (c *Controller) CreateDrip(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) CreateMessage(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		writeStrf(w, "form error: %v", err)
 		return
@@ -63,7 +66,11 @@ func (c *Controller) CreateDrip(w http.ResponseWriter, r *http.Request) {
 
 	c.MessageGateway.Create(mustAtoi(spaceID), r.FormValue("text"))
 
-	msgs := c.MessageGateway.GetBySpaceID(mustAtoi(spaceID))
+	msgs, err := c.MessageGateway.GetBySpaceID(mustAtoi(spaceID))
+	if err != nil {
+		writeStrf(w, "%v", err)
+		return
+	}
 
 	strs := []string{}
 	for _, m := range msgs {
@@ -79,7 +86,7 @@ func (c *Controller) CreateDrip(w http.ResponseWriter, r *http.Request) {
 	tmpl.MustRender(w)
 }
 
-func (c *Controller) DeleteDrip(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) DeleteMessage(w http.ResponseWriter, r *http.Request) {
 	spaceID := mustAtoi(chi.URLParam(r, "spaceID"))
 	if err := r.ParseForm(); err != nil {
 		writeStrf(w, "form error: %v", err)

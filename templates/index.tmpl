@@ -13,14 +13,16 @@
       <button type="button" hx-post="/spaces" hx-target="body">
         New space
       </button>
+      {{ if ne .Space "" }}
       <hr aria-orientation="vertical" />
       <form hx-get="/spaces" hx-target="body" class="tool-bar">
         <input type="text" name="id" />
         <button>Go to space</button>
       </form>
+      {{ end }}
     </section>
     {{ if ne .Space "" }}
-    <form class="box" hx-post="/spaces/{{.Space}}/drip" hx-target="body">
+    <form class="box" hx-post="/spaces/{{.Space}}/messages" hx-target="body">
       <input
         id="text-input"
         name="text"
