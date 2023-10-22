@@ -7,9 +7,9 @@ import (
 
 var spaces []*models.Space
 
+// not concurrent-safe
 type SpaceGateway struct{}
 
-// not concurrent-safe
 func (sg *SpaceGateway) Create() *models.Space {
 	s := &models.Space{ID: rand.Int(), GUID: "asdfasdfasdfasdfasdf"}
 	spaces = append(spaces, s)

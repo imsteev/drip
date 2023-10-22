@@ -8,9 +8,9 @@ import (
 
 var messages []*models.Message
 
+// not concurrent-safe
 type MessageGateway struct{}
 
-// not concurrent-safe
 func (mg *MessageGateway) Create(spaceID int, text string) (*models.Message, error) {
 	m := &models.Message{ID: rand.Int(), SpaceID: spaceID, Text: text}
 	messages = append(messages, m)
