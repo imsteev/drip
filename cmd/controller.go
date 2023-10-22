@@ -1,10 +1,10 @@
 package main
 
 import (
-	"drip/db"
+	"drip/data"
 	"drip/templates"
-	"drip/utils"
 	"fmt"
+	"io"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -13,7 +13,8 @@ import (
 )
 
 type Controller struct {
-	Store *db.Store
+	MessageGateway *data.MessageGateway
+	SpaceGateway   *data.SpaceGateway
 }
 
 func (c *Controller) GetMainPage(w http.ResponseWriter, r *http.Request) {
@@ -24,15 +25,14 @@ func (c *Controller) GetMainPage(w http.ResponseWriter, r *http.Request) {
 func (c *Controller) GetSpace(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	spaceID := chi.URLParam(r, "spaceID")
-	msgs, err := c.Store.FindMessages(db.SpaceID(spaceID))
-	if err != nil {
-		utils.WriteStrf(w, "error generating template: %v", err)
-	}
+
+	msgs := c.MessageGateway.GetBySpaceID(mustAtoi(spaceID))
 
 	strs := []string{}
 	for _, m := range msgs {
-		strs = append(strs, m.Message)
+		strs = append(strs, m.Text)
 	}
+
 	tmpl := templates.Index{
 		Messages: strs,
 		RoomURL:  BASE_URL + "/spaces/" + spaceID,
@@ -55,40 +55,47 @@ func (c *Controller) NewSpace(w http.ResponseWriter, r *http.Request) {
 
 func (c *Controller) CreateDrip(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
-		utils.WriteStrf(w, "form error: %v", err)
+		writeStrf(w, "form error: %v", err)
 		return
 	}
 
-	space := chi.URLParam(r, "spaceID")
+	spaceID := chi.URLParam(r, "spaceID")
 
-	c.Store.AddMessage(r.FormValue("text"), db.SpaceID(space))
+	c.MessageGateway.Create(mustAtoi(spaceID), r.FormValue("text"))
 
-	msgs, err := c.Store.FindMessages(db.SpaceID(space))
-	if err != nil {
-		utils.WriteStrf(w, "error generating template: %v", err)
-	}
+	msgs := c.MessageGateway.GetBySpaceID(mustAtoi(spaceID))
 
 	strs := []string{}
 	for _, m := range msgs {
-		strs = append(strs, m.Message)
+		strs = append(strs, m.Text)
 	}
+
 	tmpl := templates.Index{
 		Messages: strs,
-		RoomURL:  BASE_URL + "/spaces/" + space,
-		Space:    space,
+		RoomURL:  BASE_URL + "/spaces/" + spaceID,
+		Space:    spaceID,
 	}
 
 	tmpl.MustRender(w)
 }
 
 func (c *Controller) DeleteDrip(w http.ResponseWriter, r *http.Request) {
-	space := chi.URLParam(r, "spaceID")
+	spaceID := mustAtoi(chi.URLParam(r, "spaceID"))
 	if err := r.ParseForm(); err != nil {
-		utils.WriteStrf(w, "form error: %v", err)
+		writeStrf(w, "form error: %v", err)
 		return
 	}
-	text := r.FormValue("text")
-	fmt.Println(space, text)
+	c.MessageGateway.DeleteBySpaceID(spaceID)
+}
 
-	c.Store.DeleteMessage(text, db.SpaceID(space))
+func writeStrf(w io.Writer, s string, args ...any) {
+	w.Write([]byte(fmt.Sprintf(s, args...)))
+}
+
+func mustAtoi(s string) int {
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		panic(err)
+	}
+	return i
 }

@@ -1,8 +1,7 @@
 package main
 
 import (
-	"database/sql"
-	"drip/db"
+	"drip/data"
 	"log"
 	"net/http"
 	"os"
@@ -36,16 +35,9 @@ func main() {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(60 * time.Second))
 
-	dbSqlite, err := sql.Open("sqlite3", "./data/sqlite3.db")
-	if err != nil {
-		log.Fatalf("failed to start database: %s", err)
-	}
-	defer dbSqlite.Close()
-
 	ctrl := Controller{
-		Store: &db.Store{
-			DB: dbSqlite,
-		},
+		MessageGateway: &data.MessageGateway{},
+		SpaceGateway:   &data.SpaceGateway{},
 	}
 
 	r.Post("/spaces", ctrl.NewSpace)

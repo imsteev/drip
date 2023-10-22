@@ -2,5 +2,6 @@
   "files.associations": {
     "*.tmpl": "html"
   },
-  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "golang.go",
+  "editor.formatOnSave": true
 }

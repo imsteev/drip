@@ -1,0 +1,33 @@
+drip
+
+Data concepts
+* Space
+  - holds a set of messages
+  - id should be globally unique
+* Message
+  - must belong to a single space
+
+Interactions
+* Creating a space
+* Creating a message
+* Deleting a message
+* Deleting a space
+
+Persistence
+* Implement a data layer that can easily be swapped out. Start by rapid prototyping
+  with in-memory, but plan to back the app with durable storage.
+
+API
+* POST /spaces
+  * return HTML that takes user to a space where they can create messages
+* POST /spaces/{id}/messages
+  * creates a message, and returns HTML with the new message
+* DELETE /spaces/{id}
+  * destroy the space, along with all the messages
+* DELETE /messages/{id}
+  * delete a single message
+
+Frontend
+HTMX templates
+
+data -> template -> generate
