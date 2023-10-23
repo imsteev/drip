@@ -3,6 +3,7 @@ package data
 import (
 	"drip/data/models"
 	"math/rand"
+	"strconv"
 )
 
 var spaces []*models.Space
@@ -12,7 +13,8 @@ type SpaceGateway struct{}
 
 func (sg *SpaceGateway) Create() *models.Space {
 	// TODO: generate a random string for GUID
-	s := &models.Space{ID: rand.Int(), GUID: "asdfasdfasdfasdfasdf"}
+	id := rand.Int()
+	s := &models.Space{ID: rand.Int(), GUID: strconv.Itoa(id)}
 	spaces = append(spaces, s)
 	return s
 }
@@ -25,13 +27,4 @@ func (sg *SpaceGateway) DeleteByID(id int) {
 			updated = append(updated, copied)
 		}
 	}
-}
-
-func (sg *SpaceGateway) Get(id int) *models.Space {
-	for _, s := range spaces {
-		if s.ID == id {
-			return s
-		}
-	}
-	return nil
 }
