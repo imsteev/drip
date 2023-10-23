@@ -2,7 +2,6 @@ package data
 
 import (
 	"drip/data/models"
-	"fmt"
 	"math/rand"
 )
 
@@ -18,7 +17,7 @@ func (mg *MessageGateway) Create(spaceID int, text string) (*models.Message, err
 }
 
 func (mg *MessageGateway) DeleteByID(id int) error {
-	updated := messages
+	var updated []*models.Message
 	for _, m := range messages {
 		if m.ID != id {
 			updated = append(updated, m)
@@ -26,26 +25,6 @@ func (mg *MessageGateway) DeleteByID(id int) error {
 	}
 	messages = updated
 	return nil
-}
-
-func (mg *MessageGateway) DeleteBySpaceID(spaceID int) error {
-	updated := messages
-	for _, m := range messages {
-		if m.SpaceID != spaceID {
-			updated = append(updated, m)
-		}
-	}
-	messages = updated
-	return nil
-}
-
-func (mg *MessageGateway) Get(id int) (*models.Message, error) {
-	for _, m := range messages {
-		if m.ID == id {
-			return m, nil
-		}
-	}
-	return nil, fmt.Errorf("no message with id %d", id)
 }
 
 func (mg *MessageGateway) FindBySpaceID(spaceID int) ([]*models.Message, error) {

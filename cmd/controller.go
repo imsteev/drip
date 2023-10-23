@@ -77,12 +77,12 @@ func (c *Controller) CreateMessage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) DeleteMessage(w http.ResponseWriter, r *http.Request) {
-	spaceID := mustAtoi(chi.URLParam(r, "spaceID"))
+	msgID := mustAtoi(chi.URLParam(r, "messageID"))
 	if err := r.ParseForm(); err != nil {
 		writeStrf(w, "form error: %v", err)
 		return
 	}
-	c.MessageGateway.DeleteBySpaceID(spaceID)
+	c.MessageGateway.DeleteByID(msgID)
 }
 
 func writeStrf(w io.Writer, s string, args ...any) {
