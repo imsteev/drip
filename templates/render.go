@@ -25,7 +25,7 @@ type Index struct {
 }
 
 func (it Index) Render(w io.Writer) error {
-	return tmpl.ExecuteTemplate(w, "base.tmpl", it)
+	return tmpl.ExecuteTemplate(w, "entrypoint.tmpl", it)
 }
 
 func (it Index) MustRender(w io.Writer) {

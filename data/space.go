@@ -11,6 +11,7 @@ var spaces []*models.Space
 type SpaceGateway struct{}
 
 func (sg *SpaceGateway) Create() *models.Space {
+	// TODO: generate a random string for GUID
 	s := &models.Space{ID: rand.Int(), GUID: "asdfasdfasdfasdfasdf"}
 	spaces = append(spaces, s)
 	return s
