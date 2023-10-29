@@ -5,7 +5,6 @@ import (
 	"drip/data/models"
 	"drip/templates"
 	"fmt"
-	"io"
 	"net/http"
 )
 
@@ -19,34 +18,42 @@ func (c *Controller) GetMainPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) GetSpace(w http.ResponseWriter, r *http.Request) {
-	spaceID, err := wrapReq(r).urlParamInt("spaceID")
+	var (
+		req = wrapReq(r)
+		res = wrapRes(w)
+	)
+
+	spaceID, err := req.urlParamInt("spaceID")
 	if err != nil {
-		writeStrf(w, "%v", err)
+		res.writef("could not get param: %v", err)
 		return
 	}
 
 	msgs, err := c.MessageGateway.FindBySpaceID(spaceID)
 	if err != nil {
-		writeStrf(w, "%v", err)
+		res.writef("could not find spaces: %v", err)
 		return
 	}
-
-	wrapRes(w).pushUrl(fmt.Sprintf("/spaces/%d", spaceID))
-	newIndex(spaceID, msgs).
-		MustRender(w)
+	res.pushUrl(fmt.Sprintf("/spaces/%d", spaceID))
+	newIndex(spaceID, msgs).MustRender(w)
 }
 
 func (c *Controller) NewSpace(w http.ResponseWriter, r *http.Request) {
+	var res = wrapRes(w)
+
 	spaceID := c.SpaceGateway.Create()
-	wrapRes(w).pushUrl(fmt.Sprintf("/spaces/%d", spaceID))
-	newIndex(spaceID, nil).
-		MustRender(w)
+	res.pushUrl(fmt.Sprintf("/spaces/%d", spaceID))
+	newIndex(spaceID, nil).MustRender(w)
 }
 
 func (c *Controller) CreateMessage(w http.ResponseWriter, r *http.Request) {
-	spaceID, err := wrapReq(r).urlParamInt("spaceID")
+	var (
+		req = wrapReq(r)
+		res = wrapRes(w)
+	)
+	spaceID, err := req.urlParamInt("spaceID")
 	if err != nil {
-		writeStrf(w, "form error: %v", err)
+		res.writef("could not get param: %v", err)
 		return
 	}
 
@@ -54,18 +61,17 @@ func (c *Controller) CreateMessage(w http.ResponseWriter, r *http.Request) {
 
 	msgs, err := c.MessageGateway.FindBySpaceID(spaceID)
 	if err != nil {
-		writeStrf(w, "error finding messages: %v", err)
+		res.writef("error finding messages: %v", err)
 		return
 	}
 
-	newIndex(spaceID, msgs).
-		MustRender(w)
+	newIndex(spaceID, msgs).MustRender(w)
 }
 
 func (c *Controller) DeleteMessage(w http.ResponseWriter, r *http.Request) {
 	msgID, err := wrapReq(r).urlParamInt("messageID")
 	if err != nil {
-		writeStrf(w, "form error: %v", err)
+		wrapRes(w).writef("could not get param: %v", err)
 		return
 	}
 	c.MessageGateway.DeleteByID(msgID)
@@ -77,8 +83,4 @@ func newIndex(spaceID int, msgs []*models.Message) templates.Index {
 		SpaceID:  spaceID,
 		RoomURL:  fmt.Sprintf("%s/spaces/%d", BASE_URL, spaceID),
 	}
-}
-
-func writeStrf(w io.Writer, s string, args ...any) {
-	w.Write([]byte(fmt.Sprintf(s, args...)))
 }

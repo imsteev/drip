@@ -2,6 +2,7 @@ package main
 
 import (
 	"drip/data"
+	"drip/data/migrations"
 	"log"
 	"net/http"
 	"os"
@@ -29,11 +30,6 @@ func init() {
 	}
 }
 
-var schema string = `
-	CREATE TABLE messages (id INTEGER PRIMARY KEY AUTOINCREMENT, space_id integer, text TEXT);
-	CREATE TABLE spaces (id INTEGER PRIMARY KEY AUTOINCREMENT);
-`
-
 func main() {
 
 	r := chi.NewRouter()
@@ -48,7 +44,7 @@ func main() {
 	}
 	defer db.Close()
 
-	db.MustExec(schema)
+	db.MustExec(migrations.SCHEMA)
 
 	ctrl := Controller{
 		MessageGateway: &data.MessageGateway{DB: db},

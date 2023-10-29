@@ -29,15 +29,3 @@ func (r *Req) urlParamInt(param string) (int, error) {
 	}
 	return strconv.Atoi(p)
 }
-
-type Res struct {
-	http.ResponseWriter
-}
-
-func wrapRes(w http.ResponseWriter) *Res {
-	return &Res{w}
-}
-
-func (r *Res) pushUrl(path string) {
-	r.Header().Add("HX-Push-Url", path)
-}
