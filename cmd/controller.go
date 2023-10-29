@@ -71,6 +71,6 @@ func newIndex(spaceID int, msgs []*models.Message) templates.Index {
 	return templates.Index{
 		Messages: msgs,
 		SpaceID:  spaceID,
-		RoomURL:  fmt.Sprintf("%s/spaces/%d", BASE_URL, spaceID),
+		RoomURL:  fmt.Sprintf("%s/spaces/%d", BASE_WEB_URL, spaceID),
 	}
 }
