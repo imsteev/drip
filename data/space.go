@@ -2,29 +2,40 @@ package data
 
 import (
 	"drip/data/models"
-	"math/rand"
-	"strconv"
+
+	"github.com/jmoiron/sqlx"
 )
 
 var spaces []*models.Space
 
 // not concurrent-safe
-type SpaceGateway struct{}
+type SpaceGateway struct {
+	DB *sqlx.DB
+}
 
-func (sg *SpaceGateway) Create() *models.Space {
-	// TODO: generate a random string for GUID
-	id := rand.Int()
-	s := &models.Space{ID: rand.Int(), GUID: strconv.Itoa(id)}
-	spaces = append(spaces, s)
-	return s
+var (
+	CREATE string = `INSERT INTO spaces VALUES (NULL);`
+	FIND   string = `SELECT * FROM spaces WHERE id = ?;`
+	DELETE string = `DELETE FROM spaces WHERE id = ?;`
+)
+
+func (sg *SpaceGateway) Create() int {
+	createdID, err := sg.DB.MustExec(CREATE).LastInsertId()
+	if err != nil {
+		panic(err)
+	}
+	return int(createdID)
+}
+
+func (sg *SpaceGateway) FindByID(id int) *models.Space {
+	row := sg.DB.QueryRow(FIND, id)
+	var space *models.Space
+	if err := row.Scan(&space); err != nil {
+		panic(err)
+	}
+	return space
 }
 
 func (sg *SpaceGateway) DeleteByID(id int) {
-	updated := spaces
-	for _, s := range spaces {
-		copied := s
-		if copied.ID != id {
-			updated = append(updated, copied)
-		}
-	}
+	sg.DB.MustExec(DELETE, id)
 }

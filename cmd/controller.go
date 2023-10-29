@@ -6,7 +6,6 @@ import (
 	"drip/templates"
 	"fmt"
 	"io"
-	"math/rand"
 	"net/http"
 )
 
@@ -23,6 +22,7 @@ func (c *Controller) GetSpace(w http.ResponseWriter, r *http.Request) {
 	spaceID, err := wrapReq(r).urlParamInt("spaceID")
 	if err != nil {
 		writeStrf(w, "%v", err)
+		return
 	}
 
 	msgs, err := c.MessageGateway.FindBySpaceID(spaceID)
@@ -37,9 +37,9 @@ func (c *Controller) GetSpace(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) NewSpace(w http.ResponseWriter, r *http.Request) {
-	newSpaceID := rand.Int()
-	wrapRes(w).pushUrl(fmt.Sprintf("/spaces/%d", newSpaceID))
-	newIndex(newSpaceID, nil).
+	spaceID := c.SpaceGateway.Create()
+	wrapRes(w).pushUrl(fmt.Sprintf("/spaces/%d", spaceID))
+	newIndex(spaceID, nil).
 		MustRender(w)
 }
 
@@ -54,7 +54,7 @@ func (c *Controller) CreateMessage(w http.ResponseWriter, r *http.Request) {
 
 	msgs, err := c.MessageGateway.FindBySpaceID(spaceID)
 	if err != nil {
-		writeStrf(w, "%v", err)
+		writeStrf(w, "error finding messages: %v", err)
 		return
 	}
 

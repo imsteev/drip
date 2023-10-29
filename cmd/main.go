@@ -9,6 +9,10 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/jmoiron/sqlx"
+
+	// driver for sqlx
+	_ "github.com/mattn/go-sqlite3"
 )
 
 var (
@@ -25,6 +29,11 @@ func init() {
 	}
 }
 
+var schema string = `
+	CREATE TABLE messages (id INTEGER PRIMARY KEY AUTOINCREMENT, space_id integer, text TEXT);
+	CREATE TABLE spaces (id INTEGER PRIMARY KEY AUTOINCREMENT);
+`
+
 func main() {
 
 	r := chi.NewRouter()
@@ -33,9 +42,17 @@ func main() {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(60 * time.Second))
 
+	db, err := sqlx.Open("sqlite3", ":memory:")
+	if err != nil {
+		log.Fatalf("could not start database: %v", err)
+	}
+	defer db.Close()
+
+	db.MustExec(schema)
+
 	ctrl := Controller{
-		MessageGateway: &data.MessageGateway{},
-		SpaceGateway:   &data.SpaceGateway{},
+		MessageGateway: &data.MessageGateway{DB: db},
+		SpaceGateway:   &data.SpaceGateway{DB: db},
 	}
 
 	r.Post("/spaces", ctrl.NewSpace)

@@ -2,37 +2,52 @@ package data
 
 import (
 	"drip/data/models"
-	"math/rand"
+
+	"github.com/jmoiron/sqlx"
 )
 
 var messages []*models.Message
 
-// not concurrent-safe
-type MessageGateway struct{}
+var (
+	sql_create string = `
+	INSERT INTO messages (space_id, text) VALUES (?, ?);
+	`
 
-func (mg *MessageGateway) Create(spaceID int, text string) (*models.Message, error) {
-	m := &models.Message{ID: rand.Int(), SpaceID: spaceID, Text: text}
-	messages = append(messages, m)
-	return m, nil
+	sql_delete string = `
+	DELETE FROM messages WHERE id = ?;
+	`
+)
+
+// not concurrent-safe
+type MessageGateway struct {
+	DB *sqlx.DB
+}
+
+func (mg *MessageGateway) Create(spaceID int, text string) error {
+	mg.DB.MustExec(sql_create, spaceID, text)
+	return nil
 }
 
 func (mg *MessageGateway) DeleteByID(id int) error {
-	var updated []*models.Message
-	for _, m := range messages {
-		if m.ID != id {
-			updated = append(updated, m)
-		}
-	}
-	messages = updated
+	mg.DB.MustExec(sql_delete, id)
 	return nil
 }
 
 func (mg *MessageGateway) FindBySpaceID(spaceID int) ([]*models.Message, error) {
 	var spaceMsgs []*models.Message
-	for _, m := range messages {
-		if m.SpaceID == spaceID {
-			spaceMsgs = append(spaceMsgs, m)
-		}
+
+	rows, err := mg.DB.Query(`SELECT * FROM messages WHERE space_id = ?;`, spaceID)
+	if err != nil {
+		return nil, err
 	}
+
+	for rows.Next() {
+		var msg models.Message
+		if err := rows.Scan(&msg.ID, &msg.SpaceID, &msg.Text); err != nil {
+			return nil, err
+		}
+		spaceMsgs = append(spaceMsgs, &msg)
+	}
+
 	return spaceMsgs, nil
 }
