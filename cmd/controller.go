@@ -12,56 +12,53 @@ type Controller struct {
 	SpaceGateway   *data.SpaceGateway
 }
 
-func (c *Controller) GetMainPage(res *Res, req *Req) {
-	newIndex(0, nil).MustRender(res)
+func (c *Controller) GetMainPage(res *Res, req *Req) error {
+	return newIndex(0, nil).Render(res)
 }
 
-func (c *Controller) GetSpace(res *Res, req *Req) {
+func (c *Controller) GetSpace(res *Res, req *Req) error {
 	spaceID, err := req.urlParamInt("spaceID")
 	if err != nil {
-		res.writef("could not get param: %v", err)
-		return
+		return fmt.Errorf("could not get param: %v", err)
 	}
 	msgs, err := c.MessageGateway.FindBySpaceID(spaceID)
 	if err != nil {
-		res.writef("could not find spaces: %v", err)
-		return
+		return fmt.Errorf("could not find spaces: %v", err)
 	}
 	res.pushUrl(fmt.Sprintf("/spaces/%d", spaceID))
-	newIndex(spaceID, msgs).MustRender(res)
+	return newIndex(spaceID, msgs).Render(res)
 }
 
-func (c *Controller) NewSpace(res *Res, req *Req) {
+func (c *Controller) NewSpace(res *Res, req *Req) error {
 	spaceID := c.SpaceGateway.Create()
 	res.pushUrl(fmt.Sprintf("/spaces/%d", spaceID))
-	newIndex(spaceID, nil).MustRender(res)
+	return newIndex(spaceID, nil).Render(res)
 }
 
-func (c *Controller) CreateMessage(res *Res, req *Req) {
+func (c *Controller) CreateMessage(res *Res, req *Req) error {
 	spaceID, err := req.urlParamInt("spaceID")
 	if err != nil {
-		res.writef("could not get param: %v", err)
-		return
+		return fmt.Errorf("could not get param: %v", err)
 	}
 
-	c.MessageGateway.Create(spaceID, req.FormValue("text"))
+	if err := c.MessageGateway.Create(spaceID, req.FormValue("text")); err != nil {
+		return fmt.Errorf("could not create message: %v", err)
+	}
 
 	msgs, err := c.MessageGateway.FindBySpaceID(spaceID)
 	if err != nil {
-		res.writef("error finding messages: %v", err)
-		return
+		return fmt.Errorf("error finding messages: %v", err)
 	}
 
-	newIndex(spaceID, msgs).MustRender(res)
+	return newIndex(spaceID, msgs).Render(res)
 }
 
-func (c *Controller) DeleteMessage(res *Res, req *Req) {
+func (c *Controller) DeleteMessage(res *Res, req *Req) error {
 	msgID, err := req.urlParamInt("messageID")
 	if err != nil {
-		res.writef("could not get param: %v", err)
-		return
+		return fmt.Errorf("could not get param: %v", err)
 	}
-	c.MessageGateway.DeleteByID(msgID)
+	return c.MessageGateway.DeleteByID(msgID)
 }
 
 func newIndex(spaceID int, msgs []*models.Message) templates.Index {

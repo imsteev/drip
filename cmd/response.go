@@ -18,5 +18,5 @@ func (r *Res) pushUrl(path string) {
 }
 
 func (r *Res) writef(format string, params ...any) {
-	r.Write([]byte(fmt.Sprintf(format, params)))
+	r.Write([]byte(fmt.Sprintf(format, params...)))
 }

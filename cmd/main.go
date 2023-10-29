@@ -65,10 +65,12 @@ func main() {
 
 }
 
-type myHandler func(res *Res, req *Req)
+type myHandler func(res *Res, req *Req) error
 
 func wrapped(h myHandler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		h(wrapRes(w), wrapReq(r))
+		if err := h(wrapRes(w), wrapReq(r)); err != nil {
+			panic(err) // TODO: handle better
+		}
 	}
 }
