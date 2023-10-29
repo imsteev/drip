@@ -1,31 +1,26 @@
 {{ define "body" }}
 <main>
-  <!-- TODO: by default the QR code should be obfuscated. -->
-  {{ if ne .SpaceID 0 }}
-  <img
-    src="https://chart.googleapis.com/chart?cht=qr&chl={{ .RoomURL }}&chs=160x160&chld=L|0"
-    class="qr-code img-thumbnail img-responsive"
-  />
-  {{ end }}
   <div>
     <h1>Drip</h1>
     <section class="tool-bar">
       <button type="button" hx-post="/spaces" hx-target="body">
         New space
       </button>
+      <img
+        src="https://chart.googleapis.com/chart?cht=qr&chl={{ .RoomURL }}&chs=80x80&chld=L|0"
+        class="qr-code img-thumbnail img-responsive"
+      />
     </section>
     {{ if ne .SpaceID 0 }}
     <form class="box" hx-post="/spaces/{{.SpaceID}}/messages" hx-target="body">
       <input id="text-input" name="text" placeholder="Post a note" />
-      <section class="actions margin">
+      <section class="actions" style="margin-top: 16px">
         <button>+ new</button>
       </section>
-      space:
-      <span name="spaceID" value="{{ .SpaceID }}">{{.SpaceID}}</span>
     </form>
     {{ end }}
-    <br />
   </div>
+
   <div style="display: flex; gap: 16px" class="flex-wrap:wrap">
     {{ range.Messages }}
     <form
