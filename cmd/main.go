@@ -70,7 +70,8 @@ type myHandler func(res *Res, req *Req) error
 func wrapped(h myHandler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if err := h(wrapRes(w), wrapReq(r)); err != nil {
-			panic(err) // TODO: handle better
+			// TODO: how to present this without navigating user to a new page
+			w.Write([]byte(err.Error()))
 		}
 	}
 }

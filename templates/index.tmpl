@@ -13,7 +13,7 @@
       <button type="button" hx-post="/spaces" hx-target="body">
         New space
       </button>
-      {{ if ne .SpaceID 0 }}
+      {{ if eq .SpaceID 0 }}
       <hr aria-orientation="vertical" />
       <form hx-get="/spaces" hx-target="body" class="tool-bar">
         <input type="text" name="id" />
@@ -27,7 +27,7 @@
         id="text-input"
         name="text"
         type="text"
-        placeholder="What do you want to share?"
+        placeholder="Post a note"
       />
       <section class="actions margin">
         <button>+ new</button>

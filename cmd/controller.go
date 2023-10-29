@@ -42,7 +42,12 @@ func (c *Controller) CreateMessage(res *Res, req *Req) error {
 		return fmt.Errorf("could not get param: %v", err)
 	}
 
-	if err := c.MessageGateway.Create(spaceID, req.FormValue("text")); err != nil {
+	text := req.FormValue("text")
+	if text == "" {
+		return fmt.Errorf("messages must have text")
+	}
+
+	if err := c.MessageGateway.Create(spaceID, text); err != nil {
 		return fmt.Errorf("could not create message: %v", err)
 	}
 
@@ -62,7 +67,7 @@ func (c *Controller) DeleteMessage(res *Res, req *Req) error {
 	return c.MessageGateway.DeleteByID(msgID)
 }
 
-func newIndex(spaceID int, msgs []*models.Message) Renderer {
+func newIndex(spaceID int, msgs []*models.Message) templates.Index {
 	return templates.Index{
 		Messages: msgs,
 		SpaceID:  spaceID,
