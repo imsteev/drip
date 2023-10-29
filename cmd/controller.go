@@ -32,16 +32,13 @@ func (c *Controller) GetSpace(w http.ResponseWriter, r *http.Request) {
 	}
 
 	wrapRes(w).pushUrl(fmt.Sprintf("/spaces/%d", spaceID))
-
 	newIndex(spaceID, msgs).
 		MustRender(w)
 }
 
 func (c *Controller) NewSpace(w http.ResponseWriter, r *http.Request) {
 	newSpaceID := rand.Int()
-
 	wrapRes(w).pushUrl(fmt.Sprintf("/spaces/%d", newSpaceID))
-
 	newIndex(newSpaceID, nil).
 		MustRender(w)
 }
@@ -61,7 +58,8 @@ func (c *Controller) CreateMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newIndex(spaceID, msgs).MustRender(w)
+	newIndex(spaceID, msgs).
+		MustRender(w)
 }
 
 func (c *Controller) DeleteMessage(w http.ResponseWriter, r *http.Request) {
