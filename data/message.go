@@ -6,19 +6,12 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-var messages []*models.Message
-
 var (
-	sql_create string = `
-	INSERT INTO messages (space_id, text) VALUES (?, ?);
-	`
-
-	sql_delete string = `
-	DELETE FROM messages WHERE id = ?;
-	`
+	sql_create string = `INSERT INTO messages (space_id, text) VALUES (?, ?);`
+	sql_delete string = `DELETE FROM messages WHERE id = ?;`
+	sql_find   string = `SELECT * FROM messages WHERE space_id = ?;`
 )
 
-// not concurrent-safe
 type MessageGateway struct {
 	DB *sqlx.DB
 }
@@ -36,7 +29,7 @@ func (mg *MessageGateway) DeleteByID(id int) error {
 func (mg *MessageGateway) FindBySpaceID(spaceID int) ([]*models.Message, error) {
 	var spaceMsgs []*models.Message
 
-	rows, err := mg.DB.Query(`SELECT * FROM messages WHERE space_id = ?;`, spaceID)
+	rows, err := mg.DB.Query(sql_find, spaceID)
 	if err != nil {
 		return nil, err
 	}

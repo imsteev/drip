@@ -6,9 +6,6 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-var spaces []*models.Space
-
-// not concurrent-safe
 type SpaceGateway struct {
 	DB *sqlx.DB
 }
@@ -27,13 +24,13 @@ func (sg *SpaceGateway) Create() int {
 	return int(createdID)
 }
 
-func (sg *SpaceGateway) FindByID(id int) *models.Space {
+func (sg *SpaceGateway) FindByID(id int) (*models.Space, error) {
 	row := sg.DB.QueryRow(FIND, id)
-	var space *models.Space
-	if err := row.Scan(&space); err != nil {
-		panic(err)
+	var space models.Space
+	if err := row.Scan(&space.ID); err != nil {
+		return nil, err
 	}
-	return space
+	return &space, nil
 }
 
 func (sg *SpaceGateway) DeleteByID(id int) {
