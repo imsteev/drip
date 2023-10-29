@@ -2,14 +2,12 @@ package main
 
 import (
 	"drip/data"
+	"drip/data/models"
 	"drip/templates"
 	"fmt"
 	"io"
 	"math/rand"
 	"net/http"
-	"strconv"
-
-	"github.com/go-chi/chi"
 )
 
 type Controller struct {
@@ -18,46 +16,42 @@ type Controller struct {
 }
 
 func (c *Controller) GetMainPage(w http.ResponseWriter, r *http.Request) {
-	tmpl := templates.Index{}
-	tmpl.MustRender(w)
+	newIndex(0, nil).MustRender(w)
 }
 
 func (c *Controller) GetSpace(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	spaceID := mustAtoi(chi.URLParam(r, "spaceID"))
-
-	msgs, err := c.MessageGateway.FindBySpaceID(spaceID)
+	spaceID, err := wrapReq(r).urlParamInt("spaceID")
 	if err != nil {
 		writeStrf(w, "%v", err)
 	}
 
-	tmpl := templates.Index{
-		Messages: msgs,
-		RoomURL:  fmt.Sprintf("%s/spaces/%d", BASE_URL, spaceID),
-		SpaceID:  spaceID,
+	msgs, err := c.MessageGateway.FindBySpaceID(spaceID)
+	if err != nil {
+		writeStrf(w, "%v", err)
+		return
 	}
-	w.Header().Add("HX-Push-Url", fmt.Sprintf("/spaces/%d", spaceID))
 
-	tmpl.MustRender(w)
+	wrapRes(w).pushUrl(fmt.Sprintf("/spaces/%d", spaceID))
+
+	newIndex(spaceID, msgs).
+		MustRender(w)
 }
 
 func (c *Controller) NewSpace(w http.ResponseWriter, r *http.Request) {
 	newSpaceID := rand.Int()
-	tmpl := templates.Index{
-		RoomURL: fmt.Sprintf("%s/spaces/%d", BASE_URL, newSpaceID),
-		SpaceID: newSpaceID,
-	}
-	w.Header().Add("HX-Push-Url", fmt.Sprintf("/spaces/%d", newSpaceID))
-	tmpl.MustRender(w)
+
+	wrapRes(w).pushUrl(fmt.Sprintf("/spaces/%d", newSpaceID))
+
+	newIndex(newSpaceID, nil).
+		MustRender(w)
 }
 
 func (c *Controller) CreateMessage(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseForm(); err != nil {
+	spaceID, err := wrapReq(r).urlParamInt("spaceID")
+	if err != nil {
 		writeStrf(w, "form error: %v", err)
 		return
 	}
-
-	spaceID := mustAtoi(chi.URLParam(r, "spaceID"))
 
 	c.MessageGateway.Create(spaceID, r.FormValue("text"))
 
@@ -67,32 +61,26 @@ func (c *Controller) CreateMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl := templates.Index{
-		Messages: msgs,
-		RoomURL:  fmt.Sprintf("%s/spaces/%d", BASE_URL, spaceID),
-		SpaceID:  spaceID,
-	}
-
-	tmpl.MustRender(w)
+	newIndex(spaceID, msgs).MustRender(w)
 }
 
 func (c *Controller) DeleteMessage(w http.ResponseWriter, r *http.Request) {
-	msgID := mustAtoi(chi.URLParam(r, "messageID"))
-	if err := r.ParseForm(); err != nil {
+	msgID, err := wrapReq(r).urlParamInt("messageID")
+	if err != nil {
 		writeStrf(w, "form error: %v", err)
 		return
 	}
 	c.MessageGateway.DeleteByID(msgID)
 }
 
-func writeStrf(w io.Writer, s string, args ...any) {
-	w.Write([]byte(fmt.Sprintf(s, args...)))
+func newIndex(spaceID int, msgs []*models.Message) templates.Index {
+	return templates.Index{
+		Messages: msgs,
+		SpaceID:  spaceID,
+		RoomURL:  fmt.Sprintf("%s/spaces/%d", BASE_URL, spaceID),
+	}
 }
 
-func mustAtoi(s string) int {
-	i, err := strconv.Atoi(s)
-	if err != nil {
-		panic(err)
-	}
-	return i
+func writeStrf(w io.Writer, s string, args ...any) {
+	w.Write([]byte(fmt.Sprintf(s, args...)))
 }
