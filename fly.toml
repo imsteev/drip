@@ -10,10 +10,11 @@ primary_region = "ewr"
   builder = "paketobuildpacks/builder:base"
   buildpacks = ["gcr.io/paketo-buildpacks/go"]
 
+[build.args]
+  BASE_WEB_URL = "https://billowing-fire-4647.fly.dev"
 
 [env]
   PORT = "8080"
-  BASE_WEB_URL = "https://billowing-fire-4647.fly.dev"
 
 [http_service]
   internal_port = 8080
