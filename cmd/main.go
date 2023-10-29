@@ -51,11 +51,11 @@ func main() {
 		SpaceGateway:   &data.SpaceGateway{DB: db},
 	}
 
-	r.Post("/spaces", ctrl.NewSpace)
-	r.Get("/spaces/{spaceID}", ctrl.GetSpace)
-	r.Post("/spaces/{spaceID}/messages", ctrl.CreateMessage)
-	r.Delete("/messages/{messageID}", ctrl.DeleteMessage)
-	r.Get("/", ctrl.GetMainPage)
+	r.Post("/spaces", wrapped(ctrl.NewSpace))
+	r.Get("/spaces/{spaceID}", wrapped(ctrl.GetSpace))
+	r.Post("/spaces/{spaceID}/messages", wrapped(ctrl.CreateMessage))
+	r.Delete("/messages/{messageID}", wrapped(ctrl.DeleteMessage))
+	r.Get("/", wrapped(ctrl.GetMainPage))
 
 	addr := ":" + PORT
 	log.Printf("listening on %s\n", addr)
@@ -63,4 +63,12 @@ func main() {
 		log.Fatalf("server crashed: %s", err)
 	}
 
+}
+
+type myHandler func(res *Res, req *Req)
+
+func wrapped(h myHandler) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		h(wrapRes(w), wrapReq(r))
+	}
 }
