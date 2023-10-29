@@ -13,22 +13,10 @@
       <button type="button" hx-post="/spaces" hx-target="body">
         New space
       </button>
-      {{ if eq .SpaceID 0 }}
-      <hr aria-orientation="vertical" />
-      <form hx-get="/spaces" hx-target="body" class="tool-bar">
-        <input type="text" name="id" />
-        <button>Go to space</button>
-      </form>
-      {{ end }}
     </section>
     {{ if ne .SpaceID 0 }}
     <form class="box" hx-post="/spaces/{{.SpaceID}}/messages" hx-target="body">
-      <input
-        id="text-input"
-        name="text"
-        type="text"
-        placeholder="Post a note"
-      />
+      <input id="text-input" name="text" placeholder="Post a note" />
       <section class="actions margin">
         <button>+ new</button>
       </section>
