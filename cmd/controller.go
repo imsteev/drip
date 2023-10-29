@@ -13,7 +13,7 @@ type Controller struct {
 }
 
 func (c *Controller) GetMainPage(res *Res, req *Req) error {
-	return newIndex(0, nil).Render(res)
+	return res.render(newIndex(0, nil))
 }
 
 func (c *Controller) GetSpace(res *Res, req *Req) error {
@@ -26,13 +26,14 @@ func (c *Controller) GetSpace(res *Res, req *Req) error {
 		return fmt.Errorf("could not find spaces: %v", err)
 	}
 	res.pushUrl(fmt.Sprintf("/spaces/%d", spaceID))
-	return newIndex(spaceID, msgs).Render(res)
+
+	return res.render(newIndex(spaceID, msgs))
 }
 
 func (c *Controller) NewSpace(res *Res, req *Req) error {
 	spaceID := c.SpaceGateway.Create()
 	res.pushUrl(fmt.Sprintf("/spaces/%d", spaceID))
-	return newIndex(spaceID, nil).Render(res)
+	return res.render(newIndex(spaceID, nil))
 }
 
 func (c *Controller) CreateMessage(res *Res, req *Req) error {
@@ -50,7 +51,7 @@ func (c *Controller) CreateMessage(res *Res, req *Req) error {
 		return fmt.Errorf("error finding messages: %v", err)
 	}
 
-	return newIndex(spaceID, msgs).Render(res)
+	return res.render(newIndex(spaceID, msgs))
 }
 
 func (c *Controller) DeleteMessage(res *Res, req *Req) error {
@@ -61,7 +62,7 @@ func (c *Controller) DeleteMessage(res *Res, req *Req) error {
 	return c.MessageGateway.DeleteByID(msgID)
 }
 
-func newIndex(spaceID int, msgs []*models.Message) templates.Index {
+func newIndex(spaceID int, msgs []*models.Message) Renderer {
 	return templates.Index{
 		Messages: msgs,
 		SpaceID:  spaceID,

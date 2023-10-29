@@ -1,12 +1,16 @@
 package main
 
 import (
-	"fmt"
+	"io"
 	"net/http"
 )
 
 type Res struct {
 	http.ResponseWriter
+}
+
+type Renderer interface {
+	Render(w io.Writer) error
 }
 
 func wrapRes(w http.ResponseWriter) *Res {
@@ -17,6 +21,6 @@ func (r *Res) pushUrl(path string) {
 	r.Header().Add("HX-Push-Url", path)
 }
 
-func (r *Res) writef(format string, params ...any) {
-	r.Write([]byte(fmt.Sprintf(format, params...)))
+func (r *Res) render(rr Renderer) error {
+	return rr.Render(r)
 }
