@@ -17,8 +17,9 @@ import (
 )
 
 var (
-	PORT     = os.Getenv("PORT")
-	BASE_URL = os.Getenv("BASE_URL")
+	PORT       = os.Getenv("PORT")
+	BASE_URL   = os.Getenv("BASE_URL")
+	SQLITE_SRC = "drip.db"
 )
 
 func init() {
@@ -38,14 +39,15 @@ func main() {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(60 * time.Second))
 
-	db, err := sqlx.Open("sqlite3", ":memory:")
+	db, err := sqlx.Open("sqlite3", SQLITE_SRC)
 	if err != nil {
 		log.Fatalf("could not start database: %v", err)
 	}
 	defer db.Close()
 
-	// FLAW: at this point
-	db.MustExec(migrations.SCHEMA)
+	if err := migrations.Migrate(db); err != nil {
+		log.Fatalf("failed to migrate: %v", err)
+	}
 
 	ctrl := Controller{
 		MessageGateway: &data.MessageGateway{DB: db},
