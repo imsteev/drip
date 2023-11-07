@@ -6,30 +6,24 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-var (
-	sql_create string = `INSERT INTO messages (space_id, text) VALUES (?, ?);`
-	sql_delete string = `DELETE FROM messages WHERE id = ?;`
-	sql_find   string = `SELECT * FROM messages WHERE space_id = ?;`
-)
-
 type MessageGateway struct {
 	DB *sqlx.DB
 }
 
 func (mg *MessageGateway) Create(spaceID int, text string) error {
-	mg.DB.MustExec(sql_create, spaceID, text)
+	mg.DB.MustExec(`INSERT INTO messages (space_id, text) VALUES (?, ?);`, spaceID, text)
 	return nil
 }
 
 func (mg *MessageGateway) DeleteByID(id int) error {
-	mg.DB.MustExec(sql_delete, id)
+	mg.DB.MustExec(`DELETE FROM messages WHERE id = ?;`, id)
 	return nil
 }
 
 func (mg *MessageGateway) FindBySpaceID(spaceID int) ([]*models.Message, error) {
 	var spaceMsgs []*models.Message
 
-	rows, err := mg.DB.Query(sql_find, spaceID)
+	rows, err := mg.DB.Query(`SELECT * FROM messages WHERE space_id = ?;`, spaceID)
 	if err != nil {
 		return nil, err
 	}
