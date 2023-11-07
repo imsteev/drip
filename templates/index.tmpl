@@ -1,15 +1,17 @@
 {{ define "body" }}
 <main>
   <div>
-    <h1>Drip</h1>
+    <a href="/">Home</a>
     <section class="tool-bar">
       <button type="button" hx-post="/spaces" hx-target="body">
         New space
       </button>
+      {{ if ne .SpaceID 0 }}
       <img
         src="https://chart.googleapis.com/chart?cht=qr&chl={{ .RoomURL }}&chs=80x80&chld=L|0"
         class="qr-code img-thumbnail img-responsive"
       />
+      {{ end }}
     </section>
     {{ if ne .SpaceID 0 }}
     <form class="box" hx-post="/spaces/{{.SpaceID}}/messages" hx-target="body">
