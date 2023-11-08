@@ -21,16 +21,9 @@ func Migrate(db *sqlx.DB) error {
 		return err
 	}
 
-	for _, query := range migrationsToRun(currentVersion) {
-		db.MustExec(query)
+	for i := currentVersion; i < len(MIGRATIONS); i++ {
+		db.MustExec(MIGRATIONS[i])
 	}
 
-	return nil
-}
-
-func migrationsToRun(currentUserVersion int) []string {
-	if base := currentUserVersion + 1; base < len(MIGRATIONS) {
-		return MIGRATIONS[base:]
-	}
 	return nil
 }
