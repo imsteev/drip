@@ -13,7 +13,7 @@
       />
       {{ end }}
     </section>
-    {{ if ne .SpaceID 0 }}
+    {{ if and (ne .SpaceID 0) (lt (len .Messages) 5) }}
     <form class="box" hx-post="/spaces/{{.SpaceID}}/messages" hx-target="body">
       <input id="text-input" name="text" placeholder="Post a note" />
       <section class="actions" style="margin-top: 16px">
