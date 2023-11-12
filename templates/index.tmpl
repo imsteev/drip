@@ -1,7 +1,8 @@
 {{ define "body" }}
 <main>
+  <a href="/">Home</a>
+
   <div>
-    <a href="/">Home</a>
     <section class="tool-bar">
       <button type="button" hx-post="/spaces" hx-target="body">
         New space
@@ -11,11 +12,8 @@
       {{ end }}
     </section>
     {{ if and (ne .SpaceID 0) (lt (len .Messages) 5) }}
-    <form class="box" hx-post="/spaces/{{.SpaceID}}/messages" hx-target="body">
+    <form hx-post="/spaces/{{.SpaceID}}/messages" hx-target="body">
       <input id="text-input" name="text" placeholder="Post a note" />
-      <section class="actions" style="margin-top: 16px">
-        <button>+ new</button>
-      </section>
     </form>
     {{ end }}
   </div>

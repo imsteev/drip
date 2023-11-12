@@ -35,7 +35,6 @@ func (c *Controller) ShareSpace(res *Res, req *Req) error {
 	if err != nil {
 		return fmt.Errorf("could not get param: %v", err)
 	}
-	res.pushUrl(fmt.Sprintf("/spaces/%d/share", spaceID))
 	return res.render(newShare(spaceID))
 }
 
