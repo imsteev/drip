@@ -1,0 +1,6 @@
+{{ if ne .SpaceID 0 }}
+<img
+  src="https://chart.googleapis.com/chart?cht=qr&chl={{ .RoomURL }}&chs=80x80&chld=L|0"
+  class="qr-code img-thumbnail img-responsive"
+/>
+{{ end }}

@@ -57,6 +57,7 @@ func main() {
 	r.Post("/spaces", wrapped(ctrl.NewSpace))
 	r.Get("/spaces/{spaceID}", wrapped(ctrl.GetSpace))
 	r.Post("/spaces/{spaceID}/messages", wrapped(ctrl.CreateMessage))
+	r.Post("/spaces/{spaceID}/share", wrapped(ctrl.ShareSpace))
 	r.Delete("/messages/{messageID}", wrapped(ctrl.DeleteMessage))
 	r.Get("/", wrapped(ctrl.GetMainPage))
 

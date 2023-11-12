@@ -27,3 +27,12 @@ type Index struct {
 func (it Index) Render(w io.Writer) error {
 	return tmpl.ExecuteTemplate(w, "entrypoint.tmpl", it)
 }
+
+type Share struct {
+	RoomURL string
+	SpaceID int
+}
+
+func (s Share) Render(w io.Writer) error {
+	return tmpl.ExecuteTemplate(w, "share.tmpl", s)
+}

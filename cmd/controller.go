@@ -30,6 +30,15 @@ func (c *Controller) GetSpace(res *Res, req *Req) error {
 	return res.render(newIndex(spaceID, msgs))
 }
 
+func (c *Controller) ShareSpace(res *Res, req *Req) error {
+	spaceID, err := req.urlParamInt("spaceID")
+	if err != nil {
+		return fmt.Errorf("could not get param: %v", err)
+	}
+	res.pushUrl(fmt.Sprintf("/spaces/%d/share", spaceID))
+	return res.render(newShare(spaceID))
+}
+
 func (c *Controller) NewSpace(res *Res, req *Req) error {
 	spaceID := c.SpaceGateway.Create()
 	res.pushUrl(fmt.Sprintf("/spaces/%d", spaceID))
@@ -72,5 +81,12 @@ func newIndex(spaceID int, msgs []*models.Message) templates.Index {
 		Messages: msgs,
 		SpaceID:  spaceID,
 		RoomURL:  fmt.Sprintf("%s/spaces/%d", BASE_URL, spaceID),
+	}
+}
+
+func newShare(spaceID int) templates.Share {
+	return templates.Share{
+		SpaceID: spaceID,
+		RoomURL: fmt.Sprintf("%s/spaces/%d", BASE_URL, spaceID),
 	}
 }
